@@ -1,0 +1,584 @@
+[gd_scene format=4 uid="uid://b1gbte8os7la6"]
+
+[ext_resource type="Script" uid="uid://fu15ianccrwa" path="res://scenes/hex_board.gd" id="1_skcy1"]
+[ext_resource type="PackedScene" path="res://scenes/hex_tile.tscn" id="2_tile"]
+
+[sub_resource type="Environment" id="Environment_board"]
+background_mode = 1
+background_color = Color(0.04, 0.09, 0.095, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.76, 0.88, 0.94, 1)
+ambient_light_energy = 0.45
+
+[sub_resource type="StandardMaterial3D" id="Material_floor"]
+albedo_color = Color(0.055, 0.11, 0.115, 1)
+
+[sub_resource type="PlaneMesh" id="Mesh_floor"]
+material = SubResource("Material_floor")
+size = Vector2(160, 160)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvhpy"]
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.8627451, 1, 0.9529412, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_g48s1"]
+_surfaces = [{
+"aabb": AABB(-0.87999994, 0, -1.0161364, 1.7599999, 1e-05, 2.0322728),
+"format": 34359738375,
+"material": SubResource("StandardMaterial3D_lvhpy"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray("AAAAAAAAAADCEII/rUdhPwAAAADCEAI/4HpUPwAAAADLWfU+AAAAAAAAAADCEII/4HpUPwAAAADLWfU+AAAAAAAAAADLWXU/rUdhPwAAAADCEAI/rUdhPwAAAADCEAK/4HpUPwAAAADLWfW+rUdhPwAAAADCEAI/4HpUPwAAAADLWfW+4HpUPwAAAADLWfU+rUdhPwAAAADCEAK/PXcPJQAAAADCEIK/dlAHJQAAAADLWXW/rUdhPwAAAADCEAK/dlAHJQAAAADLWXW/4HpUPwAAAADLWfW+PXcPJQAAAADCEIK/rUdhvwAAAADCEAK/4HpUvwAAAADLWfW+PXcPJQAAAADCEIK/4HpUvwAAAADLWfW+dlAHJQAAAADLWXW/rUdhvwAAAADCEAK/rUdhvwAAAADCEAI/4HpUvwAAAADLWfU+rUdhvwAAAADCEAK/4HpUvwAAAADLWfU+4HpUvwAAAADLWfW+rUdhvwAAAADCEAI/PXePpQAAAADCEII/dlCHpQAAAADLWXU/rUdhvwAAAADCEAI/dlCHpQAAAADLWXU/4HpUvwAAAADLWfU+/38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+/")
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ktmeo"]
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.7764706, 0.36078432, 1)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_4hqxk"]
+_surfaces = [{
+"aabb": AABB(-0.84999996, 0, -0.98149544, 1.6999999, 1e-05, 1.9629909),
+"format": 34359738375,
+"material": SubResource("StandardMaterial3D_ktmeo"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray("AAAAAAAAAABJQ3s/mZlZPwAAAABJQ/s+W49CPwAAAACVqOA+AAAAAAAAAABJQ3s/W49CPwAAAACVqOA+AAAAAAAAAACVqGA/mZlZPwAAAABJQ/s+mZlZPwAAAABJQ/u+W49CPwAAAACVqOC+mZlZPwAAAABJQ/s+W49CPwAAAACVqOC+W49CPwAAAACVqOA+mZlZPwAAAABJQ/u+LJMKJQAAAABJQ3u/9M33JAAAAACVqGC/mZlZPwAAAABJQ/u+9M33JAAAAACVqGC/W49CPwAAAACVqOC+LJMKJQAAAABJQ3u/mZlZvwAAAABJQ/u+W49CvwAAAACVqOC+LJMKJQAAAABJQ3u/W49CvwAAAACVqOC+9M33JAAAAACVqGC/mZlZvwAAAABJQ/u+mZlZvwAAAABJQ/s+W49CvwAAAACVqOA+mZlZvwAAAABJQ/u+W49CvwAAAACVqOA+W49CvwAAAACVqOC+mZlZvwAAAABJQ/s+LJOKpQAAAABJQ3s/9M13pQAAAACVqGA/mZlZvwAAAABJQ/s+9M13pQAAAACVqGA/W49CvwAAAACVqOA+/38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+//38AAAAA/7//fwAAAAD/v/9/AAAAAP+/")
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_controls"]
+content_margin_left = 18.0
+content_margin_top = 9.0
+content_margin_right = 18.0
+content_margin_bottom = 9.0
+bg_color = Color(0.025, 0.065, 0.075, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.24, 0.4, 0.4, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[node name="HexBoard" type="Node3D" unique_id=108064184]
+script = ExtResource("1_skcy1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1626508372]
+environment = SubResource("Environment_board")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1673965258]
+transform = Transform3D(0.87758255, 0.38997218, -0.27887374, 0, 0.5816831, 0.8134155, 0.47942555, -0.7138393, 0.5104749, 0, 0, 0)
+light_color = Color(1, 0.97, 0.89, 1)
+light_energy = 1.05
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=2006135618]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_floor")
+
+[node name="Tiles" type="Node3D" parent="." unique_id=1332980164]
+
+[node name="Hex_00_00" parent="Tiles" unique_id=470007243 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -9.5, 0, -7.7942286)
+metadata/tile_id = 0
+
+[node name="Hex_01_00" parent="Tiles" unique_id=1797103607 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -7.5, 0, -7.7942286)
+metadata/tile_id = 1
+
+[node name="Hex_02_00" parent="Tiles" unique_id=248958368 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -5.5, 0, -7.7942286)
+metadata/tile_id = 2
+
+[node name="Hex_03_00" parent="Tiles" unique_id=238700084 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -3.5, 0, -7.7942286)
+metadata/tile_id = 3
+
+[node name="Hex_04_00" parent="Tiles" unique_id=2065913997 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -1.5, 0, -7.7942286)
+metadata/tile_id = 4
+
+[node name="Hex_05_00" parent="Tiles" unique_id=925964389 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0.5, 0, -7.7942286)
+metadata/tile_id = 5
+
+[node name="Hex_06_00" parent="Tiles" unique_id=1694015814 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 2.5, 0, -7.7942286)
+metadata/tile_id = 6
+
+[node name="Hex_07_00" parent="Tiles" unique_id=438147565 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 4.5, 0, -7.7942286)
+metadata/tile_id = 7
+
+[node name="Hex_08_00" parent="Tiles" unique_id=1739277000 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 6.5, 0, -7.7942286)
+metadata/tile_id = 8
+
+[node name="Hex_09_00" parent="Tiles" unique_id=2123957370 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 8.5, 0, -7.7942286)
+metadata/tile_id = 9
+
+[node name="Hex_00_01" parent="Tiles" unique_id=1175113473 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -8.5, 0, -6.0621777)
+metadata/tile_id = 10
+
+[node name="Hex_01_01" parent="Tiles" unique_id=219080348 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -6.5, 0, -6.0621777)
+metadata/tile_id = 11
+
+[node name="Hex_02_01" parent="Tiles" unique_id=1517663983 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -4.5, 0, -6.0621777)
+metadata/tile_id = 12
+
+[node name="Hex_03_01" parent="Tiles" unique_id=1870878179 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -2.5, 0, -6.0621777)
+metadata/tile_id = 13
+
+[node name="Hex_04_01" parent="Tiles" unique_id=711430831 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -0.5, 0, -6.0621777)
+metadata/tile_id = 14
+
+[node name="Hex_05_01" parent="Tiles" unique_id=564301182 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 1.5, 0, -6.0621777)
+metadata/tile_id = 15
+
+[node name="Hex_06_01" parent="Tiles" unique_id=74896580 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 3.5, 0, -6.0621777)
+metadata/tile_id = 16
+
+[node name="Hex_07_01" parent="Tiles" unique_id=2038782719 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 5.5, 0, -6.0621777)
+metadata/tile_id = 17
+
+[node name="Hex_08_01" parent="Tiles" unique_id=654208266 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 7.5, 0, -6.0621777)
+metadata/tile_id = 18
+
+[node name="Hex_09_01" parent="Tiles" unique_id=1116666359 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 9.5, 0, -6.0621777)
+metadata/tile_id = 19
+
+[node name="Hex_00_02" parent="Tiles" unique_id=506374321 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -9.5, 0, -4.330127)
+metadata/tile_id = 20
+
+[node name="Hex_01_02" parent="Tiles" unique_id=1468218561 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -7.5, 0, -4.330127)
+metadata/tile_id = 21
+
+[node name="Hex_02_02" parent="Tiles" unique_id=1573183376 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -5.5, 0, -4.330127)
+metadata/tile_id = 22
+
+[node name="Hex_03_02" parent="Tiles" unique_id=1314618393 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -3.5, 0, -4.330127)
+metadata/tile_id = 23
+
+[node name="Hex_04_02" parent="Tiles" unique_id=2070645987 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -1.5, 0, -4.330127)
+metadata/tile_id = 24
+
+[node name="Hex_05_02" parent="Tiles" unique_id=728441095 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0.5, 0, -4.330127)
+metadata/tile_id = 25
+
+[node name="Hex_06_02" parent="Tiles" unique_id=1806318794 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 2.5, 0, -4.330127)
+metadata/tile_id = 26
+
+[node name="Hex_07_02" parent="Tiles" unique_id=407082857 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 4.5, 0, -4.330127)
+metadata/tile_id = 27
+
+[node name="Hex_08_02" parent="Tiles" unique_id=2139271620 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 6.5, 0, -4.330127)
+metadata/tile_id = 28
+
+[node name="Hex_09_02" parent="Tiles" unique_id=1637717595 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 8.5, 0, -4.330127)
+metadata/tile_id = 29
+
+[node name="Hex_00_03" parent="Tiles" unique_id=727417077 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -8.5, 0, -2.5980763)
+metadata/tile_id = 30
+
+[node name="Hex_01_03" parent="Tiles" unique_id=1897129831 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -6.5, 0, -2.5980763)
+metadata/tile_id = 31
+
+[node name="Hex_02_03" parent="Tiles" unique_id=87809239 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -4.5, 0, -2.5980763)
+metadata/tile_id = 32
+
+[node name="Hex_03_03" parent="Tiles" unique_id=1007224711 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -2.5, 0, -2.5980763)
+metadata/tile_id = 33
+
+[node name="Hex_04_03" parent="Tiles" unique_id=760187422 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -0.5, 0, -2.5980763)
+metadata/tile_id = 34
+
+[node name="Hex_05_03" parent="Tiles" unique_id=2026659658 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 1.5, 0, -2.5980763)
+metadata/tile_id = 35
+
+[node name="Hex_06_03" parent="Tiles" unique_id=166815677 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 3.5, 0, -2.5980763)
+metadata/tile_id = 36
+
+[node name="Hex_07_03" parent="Tiles" unique_id=1747524753 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 5.5, 0, -2.5980763)
+metadata/tile_id = 37
+
+[node name="Hex_08_03" parent="Tiles" unique_id=388253983 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 7.5, 0, -2.5980763)
+metadata/tile_id = 38
+
+[node name="Hex_09_03" parent="Tiles" unique_id=1674761131 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 9.5, 0, -2.5980763)
+metadata/tile_id = 39
+
+[node name="Hex_00_04" parent="Tiles" unique_id=1497889781 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -9.5, 0, -0.86602545)
+metadata/tile_id = 40
+
+[node name="Hex_01_04" parent="Tiles" unique_id=1720677235 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -7.5, 0, -0.86602545)
+metadata/tile_id = 41
+
+[node name="Hex_02_04" parent="Tiles" unique_id=1739855939 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -5.5, 0, -0.86602545)
+metadata/tile_id = 42
+
+[node name="Hex_03_04" parent="Tiles" unique_id=2041916101 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -3.5, 0, -0.86602545)
+metadata/tile_id = 43
+
+[node name="Hex_04_04" parent="Tiles" unique_id=1184221113 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -1.5, 0, -0.86602545)
+metadata/tile_id = 44
+
+[node name="Hex_05_04" parent="Tiles" unique_id=2066781121 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0.5, 0, -0.86602545)
+metadata/tile_id = 45
+
+[node name="Hex_06_04" parent="Tiles" unique_id=1974912300 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 2.5, 0, -0.86602545)
+metadata/tile_id = 46
+
+[node name="Hex_07_04" parent="Tiles" unique_id=76273285 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 4.5, 0, -0.86602545)
+metadata/tile_id = 47
+
+[node name="Hex_08_04" parent="Tiles" unique_id=948404605 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 6.5, 0, -0.86602545)
+metadata/tile_id = 48
+
+[node name="Hex_09_04" parent="Tiles" unique_id=1176288767 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 8.5, 0, -0.86602545)
+metadata/tile_id = 49
+
+[node name="Hex_00_05" parent="Tiles" unique_id=1736251959 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -8.5, 0, 0.8660259)
+metadata/tile_id = 50
+
+[node name="Hex_01_05" parent="Tiles" unique_id=1486325635 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -6.5, 0, 0.8660259)
+metadata/tile_id = 51
+
+[node name="Hex_02_05" parent="Tiles" unique_id=1062364560 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -4.5, 0, 0.8660259)
+metadata/tile_id = 52
+
+[node name="Hex_03_05" parent="Tiles" unique_id=843290411 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -2.5, 0, 0.8660259)
+metadata/tile_id = 53
+
+[node name="Hex_04_05" parent="Tiles" unique_id=1448743757 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -0.5, 0, 0.8660259)
+metadata/tile_id = 54
+
+[node name="Hex_05_05" parent="Tiles" unique_id=1264669200 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 1.5, 0, 0.8660259)
+metadata/tile_id = 55
+
+[node name="Hex_06_05" parent="Tiles" unique_id=76744157 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 3.5, 0, 0.8660259)
+metadata/tile_id = 56
+
+[node name="Hex_07_05" parent="Tiles" unique_id=1841503109 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 5.5, 0, 0.8660259)
+metadata/tile_id = 57
+
+[node name="Hex_08_05" parent="Tiles" unique_id=1848292858 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 7.5, 0, 0.8660259)
+metadata/tile_id = 58
+
+[node name="Hex_09_05" parent="Tiles" unique_id=24121712 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 9.5, 0, 0.8660259)
+metadata/tile_id = 59
+
+[node name="Hex_00_06" parent="Tiles" unique_id=1495923852 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -9.5, 0, 2.5980759)
+metadata/tile_id = 60
+
+[node name="Hex_01_06" parent="Tiles" unique_id=2107691881 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -7.5, 0, 2.5980759)
+metadata/tile_id = 61
+
+[node name="Hex_02_06" parent="Tiles" unique_id=169830882 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -5.5, 0, 2.5980759)
+metadata/tile_id = 62
+
+[node name="Hex_03_06" parent="Tiles" unique_id=2022951186 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -3.5, 0, 2.5980759)
+metadata/tile_id = 63
+
+[node name="Hex_04_06" parent="Tiles" unique_id=1848878995 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -1.5, 0, 2.5980759)
+metadata/tile_id = 64
+
+[node name="Hex_05_06" parent="Tiles" unique_id=1560526094 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0.5, 0, 2.5980759)
+metadata/tile_id = 65
+
+[node name="Hex_06_06" parent="Tiles" unique_id=1705616878 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 2.5, 0, 2.5980759)
+metadata/tile_id = 66
+
+[node name="Hex_07_06" parent="Tiles" unique_id=950208353 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 4.5, 0, 2.5980759)
+metadata/tile_id = 67
+
+[node name="Hex_08_06" parent="Tiles" unique_id=2134800084 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 6.5, 0, 2.5980759)
+metadata/tile_id = 68
+
+[node name="Hex_09_06" parent="Tiles" unique_id=1673954899 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 8.5, 0, 2.5980759)
+metadata/tile_id = 69
+
+[node name="Hex_00_07" parent="Tiles" unique_id=1719608659 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -8.5, 0, 4.330127)
+metadata/tile_id = 70
+
+[node name="Hex_01_07" parent="Tiles" unique_id=1676840736 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -6.5, 0, 4.330127)
+metadata/tile_id = 71
+
+[node name="Hex_02_07" parent="Tiles" unique_id=360960750 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -4.5, 0, 4.330127)
+metadata/tile_id = 72
+
+[node name="Hex_03_07" parent="Tiles" unique_id=1469689008 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -2.5, 0, 4.330127)
+metadata/tile_id = 73
+
+[node name="Hex_04_07" parent="Tiles" unique_id=225288219 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -0.5, 0, 4.330127)
+metadata/tile_id = 74
+
+[node name="Hex_05_07" parent="Tiles" unique_id=268907101 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 1.5, 0, 4.330127)
+metadata/tile_id = 75
+
+[node name="Hex_06_07" parent="Tiles" unique_id=589703461 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 3.5, 0, 4.330127)
+metadata/tile_id = 76
+
+[node name="Hex_07_07" parent="Tiles" unique_id=1836241968 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 5.5, 0, 4.330127)
+metadata/tile_id = 77
+
+[node name="Hex_08_07" parent="Tiles" unique_id=62234229 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 7.5, 0, 4.330127)
+metadata/tile_id = 78
+
+[node name="Hex_09_07" parent="Tiles" unique_id=419482099 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 9.5, 0, 4.330127)
+metadata/tile_id = 79
+
+[node name="Hex_00_08" parent="Tiles" unique_id=1085252484 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -9.5, 0, 6.0621777)
+metadata/tile_id = 80
+
+[node name="Hex_01_08" parent="Tiles" unique_id=1107772724 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -7.5, 0, 6.0621777)
+metadata/tile_id = 81
+
+[node name="Hex_02_08" parent="Tiles" unique_id=1981450882 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -5.5, 0, 6.0621777)
+metadata/tile_id = 82
+
+[node name="Hex_03_08" parent="Tiles" unique_id=792090183 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -3.5, 0, 6.0621777)
+metadata/tile_id = 83
+
+[node name="Hex_04_08" parent="Tiles" unique_id=1138571360 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -1.5, 0, 6.0621777)
+metadata/tile_id = 84
+
+[node name="Hex_05_08" parent="Tiles" unique_id=251961038 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 0.5, 0, 6.0621777)
+metadata/tile_id = 85
+
+[node name="Hex_06_08" parent="Tiles" unique_id=1895480914 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 2.5, 0, 6.0621777)
+metadata/tile_id = 86
+
+[node name="Hex_07_08" parent="Tiles" unique_id=953094569 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 4.5, 0, 6.0621777)
+metadata/tile_id = 87
+
+[node name="Hex_08_08" parent="Tiles" unique_id=1506656631 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 6.5, 0, 6.0621777)
+metadata/tile_id = 88
+
+[node name="Hex_09_08" parent="Tiles" unique_id=114286420 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 8.5, 0, 6.0621777)
+metadata/tile_id = 89
+
+[node name="Hex_00_09" parent="Tiles" unique_id=475813564 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -8.5, 0, 7.7942286)
+metadata/tile_id = 90
+
+[node name="Hex_01_09" parent="Tiles" unique_id=1711916531 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -6.5, 0, 7.7942286)
+metadata/tile_id = 91
+
+[node name="Hex_02_09" parent="Tiles" unique_id=689806097 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -4.5, 0, 7.7942286)
+metadata/tile_id = 92
+
+[node name="Hex_03_09" parent="Tiles" unique_id=1108621113 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -2.5, 0, 7.7942286)
+metadata/tile_id = 93
+
+[node name="Hex_04_09" parent="Tiles" unique_id=1815176419 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, -0.5, 0, 7.7942286)
+metadata/tile_id = 94
+
+[node name="Hex_05_09" parent="Tiles" unique_id=1478386404 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 1.5, 0, 7.7942286)
+metadata/tile_id = 95
+
+[node name="Hex_06_09" parent="Tiles" unique_id=2060662631 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 3.5, 0, 7.7942286)
+metadata/tile_id = 96
+
+[node name="Hex_07_09" parent="Tiles" unique_id=517679164 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 5.5, 0, 7.7942286)
+metadata/tile_id = 97
+
+[node name="Hex_08_09" parent="Tiles" unique_id=1337627996 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 7.5, 0, 7.7942286)
+metadata/tile_id = 98
+
+[node name="Hex_09_09" parent="Tiles" unique_id=794451307 instance=ExtResource("2_tile")]
+transform = Transform3D(0.985, 0, 0, 0, 0.985, 0, 0, 0, 0.985, 9.5, 0, 7.7942286)
+metadata/tile_id = 99
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1123789133]
+transform = Transform3D(0.9320047, -0.28237203, 0.2272296, 0, 0.6269333, 0.77907294, -0.36244622, -0.7260996, 0.58430475, 7, 24, 18)
+projection = 1
+current = true
+size = 30.5
+
+[node name="HoverRing" type="MeshInstance3D" parent="." unique_id=275879164]
+visible = false
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_g48s1")
+
+[node name="TeamMarker" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_4hqxk")
+
+[node name="Pieces" type="Node3D" parent="."]
+
+[node name="Targets" type="Node3D" parent="."]
+
+[node name="AITimer" type="Timer" parent="."]
+wait_time = 0.32
+one_shot = true
+
+[node name="Interface" type="CanvasLayer" parent="." unique_id=1148869893]
+
+[node name="MatchPanel" type="PanelContainer" parent="Interface"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -315.0
+offset_top = 18.0
+offset_right = 315.0
+offset_bottom = 136.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_controls")
+
+[node name="MatchInfo" type="VBoxContainer" parent="Interface/MatchPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Status" type="Label" parent="Interface/MatchPanel/MatchInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.89, 0.98, 0.96, 1)
+theme_override_font_sizes/font_size = 20
+text = "Select a T cell"
+horizontal_alignment = 1
+
+[node name="Goal" type="Label" parent="Interface/MatchPanel/MatchInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.84, 0.82, 1)
+theme_override_font_sizes/font_size = 15
+text = "T cells vs. bacteria"
+horizontal_alignment = 1
+
+[node name="Activity" type="Label" parent="Interface/MatchPanel/MatchInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.84, 0.82, 1)
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="Interface/MatchPanel/MatchInfo"]
+layout_mode = 2
+alignment = 1
+mouse_filter = 2
+
+[node name="Move" type="Button" parent="Interface/MatchPanel/MatchInfo/Actions"]
+custom_minimum_size = Vector2(110, 30)
+layout_mode = 2
+toggle_mode = true
+text = "Move [M]"
+
+[node name="Clone" type="Button" parent="Interface/MatchPanel/MatchInfo/Actions"]
+custom_minimum_size = Vector2(110, 30)
+layout_mode = 2
+toggle_mode = true
+text = "Clone [C]"
+
+[node name="Controls" type="PanelContainer" parent="Interface" unique_id=324343068]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -408.0
+offset_top = -60.0
+offset_right = 408.0
+offset_bottom = -19.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_controls")
+
+[node name="Instruction" type="Label" parent="Interface/Controls" unique_id=1751808849]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.87, 0.96, 0.93, 1)
+theme_override_font_sizes/font_size = 17
+text = "Right-drag to pan  •  Middle-drag to orbit  •  Scroll to zoom  •  R to restart"
+horizontal_alignment = 1

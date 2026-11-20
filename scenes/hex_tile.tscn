@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/kaykit_medieval_hexagon/tiles/base/hex_grass.gltf" id="1_model"]
+[ext_resource type="Texture2D" path="res://assets/kaykit_medieval_hexagon/tiles/base/hexagons_medieval.png" id="2_atlas"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_color = Color(0.58, 0.86, 0.9, 1)
+albedo_texture = ExtResource("2_atlas")
+roughness = 0.5
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_tile"]
+points = PackedVector3Array(1, -0.050019562, 0.57735, -0.00019574165, -0.050019562, 1.1547, 1, -1, 0.57735, 1, -0.050019562, -0.57735, 0.9498825, 0, 0.5484147, -0.00019574165, -1, 1.1547, -0.00019574165, 0, 1.0968294, -0.9500783, 0, 0.5484147, -1, -0.050019562, 0.577124, 1, -1, -0.57735, 0, -0.050019562, -1.1547, 0.9498825, 0, -0.5486407, -1, -1, 0.577124, -0.9500783, 0, -0.5486407, -1, -0.050019562, -0.57735, 0, -1, -1.1547, 0, 0, -1.0970554, -1, -1, -0.57735)
+
+[node name="HexTile" type="StaticBody3D"]
+collision_mask = 0
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="hex_grass" parent="Model" index="0"]
+material_override = SubResource("StandardMaterial3D_grass")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_tile")
+
+[editable path="Model"]

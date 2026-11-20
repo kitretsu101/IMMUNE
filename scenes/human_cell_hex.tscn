@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/human_cell/human-cell.glb" id="1_cell"]
+[ext_resource type="Shader" path="res://scenes/human_cell_hex.gdshader" id="2_shape"]
+[ext_resource type="Texture2D" path="res://assets/human_cell/human-cell_Image_0.jpg" id="3_color"]
+[ext_resource type="Texture2D" path="res://assets/human_cell/human-cell_Image_1.jpg" id="4_surface"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_membrane"]
+albedo_color = Color(0.38, 0.57, 0.79, 1)
+metallic = 0.22
+roughness = 0.34
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_membrane"]
+material = SubResource("StandardMaterial3D_membrane")
+top_radius = 0.189
+bottom_radius = 0.159
+height = 0.078
+radial_segments = 6
+rings = 0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_contents"]
+shader = ExtResource("2_shape")
+shader_parameter/cell_color = ExtResource("3_color")
+shader_parameter/cell_metallic_roughness = ExtResource("4_surface")
+
+[node name="HexagonalHumanCell" type="Node3D"]
+
+[node name="Membrane" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.039, 0)
+mesh = SubResource("CylinderMesh_membrane")
+
+[node name="CellContents" parent="." instance=ExtResource("1_cell")]
+
+[node name="human-cell" parent="CellContents" index="0"]
+custom_aabb = AABB(-0.19, 0, -0.19, 0.38, 0.195, 0.38)
+material_override = SubResource("ShaderMaterial_contents")
+
+[editable path="CellContents"]
