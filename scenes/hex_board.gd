@@ -4,10 +4,12 @@ const Rules := preload("res://scenes/cell_rules.gd")
 const CellPiece := preload("res://scenes/cell_piece.gd")
 const T_CELL_MODEL := preload("res://assets/t_cell/t_cell.gltf")
 const BACTERIA_MODEL := preload("res://assets/bacteria/bacterium_game.gltf")
+const HUMAN_CELL_MODEL := preload("res://scenes/human_cell_hex.tscn")
 const SWIM_SHADER := preload("res://scenes/bacterium_swim.gdshader")
 const COLUMNS := 10
 const ROWS := 10
 const PIECE_COUNT := COLUMNS * ROWS
+const HUMAN_CELL_TILES := [34, 35, 44, 45, 46, 54, 55]
 const ROW_SPACING := sqrt(3.0)
 const TILE_RADIUS := 2.0 / sqrt(3.0)
 const ZOOM_STEP := 0.85
@@ -50,6 +52,7 @@ var swim_material := ShaderMaterial.new()
 @onready var clone_button: Button = $Interface/MatchPanel/MatchInfo/Actions/Clone
 @onready var immune_color := marker_material(Color("#44d8ff"))
 @onready var bacteria_color := marker_material(Color("#ff649b"))
+@onready var human_cell_color := marker_material(Color("#ffcc60"))
 @onready var clone_color := marker_material(Color("#80efac"))
 @onready var move_color := marker_material(Color("#8dc5e8"))
 @onready var capture_color := marker_material(Color("#ff9c71"))
@@ -113,7 +116,10 @@ func reset_match() -> void:
 	cells[PIECE_COUNT - 1] = rules.starting_cell(Rules.BACTERIA)
 	spawn_piece(0)
 	spawn_piece(PIECE_COUNT - 1)
-	activity.text = "Eliminate every bacterium to win."
+	for tile in HUMAN_CELL_TILES:
+		cells[tile] = Vector3i(Rules.HUMAN, 0, 0)
+		spawn_piece(tile)
+	activity.text = "Protect the gold human cells and eliminate the bacteria."
 	start_human_turn()
 
 
@@ -126,10 +132,22 @@ func marker_material(color: Color) -> StandardMaterial3D:
 
 
 func spawn_piece(tile: int) -> void:
-	var immune := cells[tile].x == Rules.IMMUNE
+	var team := cells[tile].x
+	var model_scene: PackedScene
+	var color: StandardMaterial3D
+	match team:
+		Rules.IMMUNE:
+			model_scene = T_CELL_MODEL
+			color = immune_color
+		Rules.BACTERIA:
+			model_scene = BACTERIA_MODEL
+			color = bacteria_color
+		Rules.HUMAN:
+			model_scene = HUMAN_CELL_MODEL
+			color = human_cell_color
 	var piece := CellPiece.new()
-	var model := (T_CELL_MODEL if immune else BACTERIA_MODEL).instantiate() as Node3D
-	if not immune:
+	var model := model_scene.instantiate() as Node3D
+	if team == Rules.BACTERIA:
 		model.scale = Vector3.ONE * 5.6
 		for surface in model.find_children("*", "MeshInstance3D", true, false):
 			surface.material_override = swim_material
@@ -137,12 +155,13 @@ func spawn_piece(tile: int) -> void:
 	var marker := team_marker.duplicate() as MeshInstance3D
 	marker.position.y = 0.023
 	marker.scale = Vector3(0.86, 1.0, 0.86)
-	marker.material_override = immune_color if immune else bacteria_color
+	marker.material_override = color
 	marker.show()
 	piece.add_child(marker)
 	piece.add_child(model)
 	piece.position = rules.positions[tile]
-	piece.rotation.y = 2.45 if immune else -0.68
+	if team != Rules.HUMAN:
+		piece.rotation.y = 2.45 if team == Rules.IMMUNE else -0.68
 	piece_layer.add_child(piece)
 	pieces[tile] = piece
 
@@ -200,7 +219,9 @@ func update_interface() -> void:
 	clone_button.disabled = not can_act
 	move_button.set_pressed_no_signal(not cloning)
 	clone_button.set_pressed_no_signal(cloning)
-	team_counts = "T cells %d  ·  Bacteria %d" % [count_team(Rules.IMMUNE), count_team(Rules.BACTERIA)]
+	team_counts = "Human cells %d/%d  ·  T cells %d  ·  Bacteria %d" % [
+		count_team(Rules.HUMAN), HUMAN_CELL_TILES.size(), count_team(Rules.IMMUNE), count_team(Rules.BACTERIA)
+	]
 	match_goal.text = team_counts
 	if moving:
 		match_status.text = "T cell moving…" if turn == Rules.IMMUNE else "Bacterium moving…"
@@ -246,7 +267,7 @@ func count_team(team: int) -> int:
 func take_ai_turn() -> void:
 	var serial := match_serial
 	var bacteria := count_team(Rules.BACTERIA)
-	var immune := count_team(Rules.IMMUNE)
+	var humans := count_team(Rules.HUMAN)
 	var options := rules.actions(cells, Rules.BACTERIA)
 	if options.is_empty():
 		pass_turn("Bacteria")
@@ -254,8 +275,10 @@ func take_ai_turn() -> void:
 	var best := Rules.NO_ACTION
 	var best_score := -INF
 	var deadline := Time.get_ticks_usec() + AI_FRAME_BUDGET_USEC
+	var distances := rules.infection_distances(cells)
 	for action in options:
-		if rules.captured_tiles(cells, action).size() == immune:
+		var infecting := cells[action.y].x == Rules.HUMAN
+		if infecting and rules.captured_tiles(cells, action).size() == humans:
 			play_action(action)
 			return
 		var variants: Array[Vector3i] = [Vector3i.ZERO]
@@ -266,13 +289,17 @@ func take_ai_turn() -> void:
 			var reply_board := cells.duplicate()
 			rules.apply(reply_board, action, clone)
 			var replies := rules.actions(reply_board, Rules.IMMUNE)
-			var next_score := rules.score(reply_board)
+			var reply_distances := rules.infection_distances(reply_board) if infecting else distances
+			var nearest := rules.nearest_bacteria(reply_board, reply_distances)
+			var next_score := rules.score(reply_board, reply_distances, nearest)
 			if replies.is_empty():
 				total += next_score
 			else:
 				var worst_reply := INF
 				for reply in replies:
-					var score := rules.immune_reply_score(reply_board, reply, next_score, bacteria + action.z)
+					var score := rules.immune_reply_score(
+						reply_board, reply, next_score, bacteria + action.z, reply_distances, nearest
+					)
 					worst_reply = minf(worst_reply, score)
 					if worst_reply == -Rules.WIN_SCORE or (action.z == 0 and worst_reply <= best_score):
 						break
@@ -320,6 +347,7 @@ func play_action(action: Vector3i) -> void:
 func finish_move(action: Vector3i, serial: int, distance: int) -> void:
 	if serial != match_serial:
 		return
+	var infecting := cells[action.y].x == Rules.HUMAN
 	var captured := rules.captured_tiles(cells, action)
 	for tile in captured:
 		pieces[tile].queue_free()
@@ -332,19 +360,21 @@ func finish_move(action: Vector3i, serial: int, distance: int) -> void:
 	moving = false
 	var team := "T cell" if turn == Rules.IMMUNE else "Bacterium"
 	activity.text = "%s moved %d hexes." % [team, distance]
-	if not captured.is_empty():
+	if infecting:
+		activity.text = "Bacterium infected %d human cell(s)." % captured.size()
+	elif not captured.is_empty():
 		activity.text = "%s consumed %d opposing cell(s)." % [team, captured.size()]
 	finish_turn()
 
 
 func finish_turn() -> void:
-	var opponent := Rules.BACTERIA if turn == Rules.IMMUNE else Rules.IMMUNE
-	if count_team(opponent) == 0:
-		var result := "You win!" if turn == Rules.IMMUNE else "Bacteria win"
+	var goal := Rules.BACTERIA if turn == Rules.IMMUNE else Rules.HUMAN
+	if count_team(goal) == 0:
+		var result := "You win! · Bacteria eliminated" if turn == Rules.IMMUNE else "Bacteria win · All human cells infected"
 		turn = 0
 		update_interface()
 		match_status.text = result + " · Press R to restart"
-	elif opponent == Rules.BACTERIA:
+	elif turn == Rules.IMMUNE:
 		start_bacteria_turn()
 	else:
 		start_human_turn()
@@ -442,7 +472,7 @@ func _physics_process(_delta: float) -> void:
 		hover_ring.position = rules.positions[hovered] + Vector3.UP * 0.018
 	var details := team_counts
 	if turn == Rules.IMMUNE and not moving and hovered >= 0 and cells[hovered].x == Rules.BACTERIA:
-		details += "  ·  Hovered bacterium: range %d, infectibility %d" % [cells[hovered].y, cells[hovered].z]
+		details += "  ·  Range %d, infectibility %d" % [cells[hovered].y, cells[hovered].z]
 	if match_goal.text != details:
 		match_goal.text = details
 

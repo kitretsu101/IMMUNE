@@ -1,6 +1,6 @@
 # IMMUNE
 
-IMMUNE is a single-player, turn-based strategy game on a 3D hex board. You control the blue T cells and play against pink bacteria. Each side wins by eliminating every opposing cell.
+IMMUNE is a single-player, turn-based strategy game on a 3D hex board. You control the blue T cells and defend seven gold human cells in the center. You win by eliminating all pink bacteria. The bacteria win by infecting all seven human cells.
 
 ## Run the game
 
@@ -12,9 +12,9 @@ The project was tested with Godot 4.7.2 and uses the Compatibility renderer.
 
 ## How to play
 
-- **Move.** Select a T cell, choose **Move**, then click a highlighted hex. A cell can move up to four hexes, depending on its individual range. It can cross empty hexes and capture an opponent by landing on its hex.
+- **Move.** Select a T cell, choose **Move**, then click a highlighted hex. A cell can move up to four hexes, depending on its individual range, and can cross only empty hexes. Human cells stay on their starting tiles until infected and block T-cell movement.
 - **Clone.** Select a T cell, choose **Clone**, then click a green hex next to it. The parent stays in place and creates one copy. During clonal evolution, one trait on the copy rolls −1, 0, or +1 within its allowed range. T cells can vary in movement range. For bacteria, either movement range or infectibility can vary.
-- **Capture.** A T cell consumes the bacterium it lands on. A bacterium consumes the T cell it lands on and can also consume adjacent T cells. Its infectibility sets the maximum number consumed in that capture, including the T cell it lands on. Hover over a bacterium on your turn to see its stats.
+- **Capture and infect.** A T cell consumes the bacterium it lands on. A bacterium can consume a T cell that stands in its way. When a bacterium lands on a human cell, its infectibility sets how many human cells it can infect, including the one it lands on and any adjacent human cells. Infected human cells are removed from the board. Hover over a bacterium on your turn to see its stats.
 
 Each side takes one action per turn. A side with no legal action passes. The game draws if both sides pass consecutively.
 
@@ -31,7 +31,7 @@ Each side takes one action per turn. A side with no legal action passes. The gam
 
 ## Bacterial AI
 
-The bacteria use two-ply minimax. The AI evaluates each legal bacterial action against the strongest T-cell reply and accounts for the probability of each clonal evolution outcome.
+The bacteria use two-ply minimax. The AI rewards infecting human cells and moving closer to those still healthy. It checks whether T cells can capture bacteria in response and accounts for the probability of each clonal evolution outcome.
 
 ## Asset credits
 

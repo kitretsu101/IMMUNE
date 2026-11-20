@@ -2,10 +2,13 @@ extends RefCounted
 
 const IMMUNE := 1
 const BACTERIA := 2
+const HUMAN := 3
 const MAX_MOVE := 4
 const MAX_INFECT := 7
 const NO_ACTION := Vector3i(-1, -1, 0)
 const WIN_SCORE := 100000.0
+const INFECTION_VALUE := 250.0
+const APPROACH_VALUE := 20.0
 
 var neighbors: Array[PackedInt64Array]
 var positions: PackedVector3Array
@@ -48,7 +51,7 @@ func cell_actions(cells: Array[Vector3i], tile: int) -> Array[Vector3i]:
 	return options
 
 
-# Only empty tiles can be crossed. An enemy tile ends the path and is captured on arrival.
+# Only empty tiles can be crossed. Human cells block T cells and can be infected by bacteria.
 func move_parents(cells: Array[Vector3i], start: int) -> Dictionary:
 	var parents := {start: -1}
 	var frontier := PackedInt32Array([start])
@@ -57,7 +60,8 @@ func move_parents(cells: Array[Vector3i], start: int) -> Dictionary:
 		var next := PackedInt32Array()
 		for tile in frontier:
 			for target in neighbors[tile]:
-				if parents.has(target) or cells[target].x == team:
+				var occupant := cells[target].x
+				if parents.has(target) or occupant == team or (team == IMMUNE and occupant == HUMAN):
 					continue
 				parents[target] = tile
 				if cells[target] == Vector3i.ZERO:
@@ -84,11 +88,13 @@ func captured_tiles(cells: Array[Vector3i], action: Vector3i) -> PackedInt32Arra
 	if action.z == 1 or cells[action.y] == Vector3i.ZERO:
 		return captured
 	captured.append(action.y)
+	if cells[action.y].x != HUMAN:
+		return captured
 	var attacker := cells[action.x]
 	for tile in neighbors[action.y]:
 		if captured.size() >= attacker.z:
 			break
-		if cells[tile].x != 0 and cells[tile].x != attacker.x:
+		if cells[tile].x == HUMAN:
 			captured.append(tile)
 	return captured
 
@@ -103,36 +109,75 @@ func apply(cells: Array[Vector3i], action: Vector3i, clone: Vector3i) -> void:
 	cells[action.x] = Vector3i.ZERO
 
 
-func piece_value(cell: Vector3i, tile: int) -> float:
-	# Material leads the evaluation. A smaller positional bonus breaks ties toward the opponent.
-	var advance := positions[tile].x + positions[tile].z
+func infection_distances(cells: Array[Vector3i]) -> PackedInt32Array:
+	var distances := PackedInt32Array()
+	distances.resize(cells.size())
+	distances.fill(cells.size())
+	var frontier := PackedInt32Array()
+	for tile in cells.size():
+		if cells[tile].x == HUMAN:
+			distances[tile] = 0
+			frontier.append(tile)
+	var index := 0
+	while index < frontier.size():
+		var tile := frontier[index]
+		for neighbor in neighbors[tile]:
+			if distances[neighbor] == cells.size():
+				distances[neighbor] = distances[tile] + 1
+				frontier.append(neighbor)
+		index += 1
+	return distances
+
+
+func nearest_bacteria(cells: Array[Vector3i], distances: PackedInt32Array) -> Vector2i:
+	var nearest := Vector2i(cells.size(), cells.size())
+	for tile in cells.size():
+		if cells[tile].x != BACTERIA:
+			continue
+		var distance := distances[tile]
+		if distance < nearest.x:
+			nearest = Vector2i(distance, nearest.x)
+		elif distance < nearest.y:
+			nearest.y = distance
+	return nearest
+
+
+func piece_value(cell: Vector3i, tile: int, distances: PackedInt32Array) -> float:
 	if cell.x == BACTERIA:
-		return 12.0 + cell.y * 1.4 + cell.z * 1.1 - advance * 0.09
-	return 12.0 + cell.y * 1.4 + advance * 0.09
+		var pressure := maxf(0.0, 12.0 - distances[tile] * 2.0)
+		return 8.0 + cell.y * 0.8 + cell.z * 0.7 + pressure
+	return 12.0 + cell.y * 1.4 + (positions[tile].x + positions[tile].z) * 0.09
 
 
-func score(cells: Array[Vector3i]) -> float:
-	var result := 0.0
+func score(cells: Array[Vector3i], distances: PackedInt32Array, nearest: Vector2i) -> float:
+	var result := -nearest.x * APPROACH_VALUE
 	for tile in cells.size():
 		var cell := cells[tile]
 		if cell.x == IMMUNE:
-			result -= piece_value(cell, tile)
+			result -= piece_value(cell, tile, distances)
 		elif cell.x == BACTERIA:
-			result += piece_value(cell, tile)
+			result += piece_value(cell, tile, distances)
+		elif cell.x == HUMAN:
+			result -= INFECTION_VALUE
 	return result
 
 
-func immune_reply_score(cells: Array[Vector3i], action: Vector3i, current: float, bacteria: int) -> float:
+func immune_reply_score(
+	cells: Array[Vector3i], action: Vector3i, current: float, bacteria: int,
+	distances: PackedInt32Array, nearest: Vector2i
+) -> float:
 	var cell := cells[action.x]
 	if action.z == 1:
 		var total := 0.0
 		var variants := clone_variants(cell)
 		for clone in variants:
-			total += piece_value(clone, action.y)
+			total += piece_value(clone, action.y, distances)
 		return current - total / variants.size()
 	var target := cells[action.y]
 	if target.x == BACTERIA:
 		if bacteria == 1:
 			return -WIN_SCORE
-		current -= piece_value(target, action.y)
-	return current + piece_value(cell, action.x) - piece_value(cell, action.y)
+		current -= piece_value(target, action.y, distances)
+		if distances[action.y] == nearest.x:
+			current -= (nearest.y - nearest.x) * APPROACH_VALUE
+	return current + piece_value(cell, action.x, distances) - piece_value(cell, action.y, distances)
