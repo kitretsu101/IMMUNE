@@ -20,7 +20,21 @@ const MIN_ELEVATION := PI / 12.0
 const MAX_ELEVATION := PI * 17.0 / 36.0
 const AI_FRAME_BUDGET_USEC := 3500
 
+## Overall neon glow strength (1.0 = original look). Scales the environment bloom.
+@export_range(0.0, 2.0, 0.01) var glow_level := 0.8:
+	set(value):
+		glow_level = value
+		if is_node_ready():
+			apply_glow()
+const BASE_GLOW_INTENSITY := 1.6
+const BASE_GLOW_STRENGTH := 1.3
+const BASE_MARKER_ENERGY := 1.8
+var tile_materials: Array[ShaderMaterial] = []
 var rules: Rules
+var tile_nodes: Dictionary = {}
+var tile_base_y: Dictionary = {}
+var tile_hover: Dictionary = {}
+var hovered_tile := -1
 var cells: Array[Vector3i] = []
 var pieces: Dictionary = {}
 var human_targets: Dictionary = {}
@@ -56,6 +70,7 @@ var swim_material := ShaderMaterial.new()
 @onready var clone_color := marker_material(Color("#80efac"))
 @onready var move_color := marker_material(Color("#8dc5e8"))
 @onready var capture_color := marker_material(Color("#ff9c71"))
+@onready var hover_fill := make_hover_fill()
 
 
 func _ready() -> void:
@@ -69,13 +84,34 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(fit_camera)
 	get_window().mouse_exited.connect(clear_hover)
 	get_window().focus_exited.connect(clear_hover)
+	apply_glow()
+
+
+func apply_glow() -> void:
+	var world := get_node_or_null("WorldEnvironment") as WorldEnvironment
+	if world and world.environment:
+		world.environment.glow_enabled = glow_level > 0.0
+		world.environment.glow_intensity = BASE_GLOW_INTENSITY * glow_level
+		world.environment.glow_strength = BASE_GLOW_STRENGTH * glow_level
+	for material in [immune_color, bacteria_color, human_cell_color, clone_color, move_color, capture_color]:
+		material.emission_energy_multiplier = BASE_MARKER_ENERGY * glow_level
+	for material in tile_materials:
+		material.set_shader_parameter("glow_scale", glow_level)
+	swim_material.set_shader_parameter("glow_scale", glow_level)
 
 
 func build_board() -> void:
 	var graph := AStar3D.new()
 	for tile in $Tiles.get_children():
 		if tile.has_meta("tile_id"):
-			graph.add_point(int(tile.get_meta("tile_id")), to_local(tile.global_position))
+			var id := int(tile.get_meta("tile_id"))
+			graph.add_point(id, to_local(tile.global_position))
+			tile_nodes[id] = tile
+			tile_base_y[id] = tile.position.y
+			tile_hover[id] = 0.0
+			var mesh := tile.get_node("Model/hex_grass") as MeshInstance3D
+			mesh.material_override = mesh.material_override.duplicate()
+			tile_materials.append(mesh.material_override)
 
 	var neighbors: Array[PackedInt64Array] = []
 	var positions := PackedVector3Array()
@@ -123,12 +159,25 @@ func reset_match() -> void:
 	start_human_turn()
 
 
-func marker_material(color: Color) -> StandardMaterial3D:
+# Neon markers: emissive so the environment glow blooms around them.
+func marker_material(color: Color, energy := 1.8) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	material.albedo_color = color
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = energy
 	return material
+
+
+# Deep near-black blue hex that lights up under the hovered grid cell.
+func make_hover_fill() -> MeshInstance3D:
+	var fill := team_marker.duplicate() as MeshInstance3D
+	fill.material_override = marker_material(Color("#06103a"), 1.4)
+	fill.scale = Vector3(1.12, 1.0, 1.12)
+	fill.hide()
+	add_child(fill)
+	return fill
 
 
 func spawn_piece(tile: int) -> void:
@@ -250,6 +299,7 @@ func add_target_marker(tile: int, color: StandardMaterial3D, size: float) -> voi
 	marker.position = rules.positions[tile] + Vector3.UP * 0.012
 	marker.scale = Vector3(size, 1.0, size)
 	marker.material_override = color
+	marker.set_meta("tile", tile)
 	marker.show()
 	target_layer.add_child(marker)
 
@@ -455,6 +505,40 @@ func clear_hover() -> void:
 	camera_rotating = false
 
 
+# Hovered tile glows strong and bobs up and down (~2 cycles/sec, 0..0.25 units);
+# pieces and markers on it follow. Others ease back to rest.
+const BOB_HEIGHT := 0.25
+const BOB_HZ := 2.0
+
+
+func tile_lift(id: int) -> float:
+	return tile_nodes[id].position.y - tile_base_y[id] if tile_nodes.has(id) else 0.0
+
+
+func _process(delta: float) -> void:
+	var t := Time.get_ticks_msec() / 1000.0
+	var wave := 0.5 + 0.5 * sin(t * TAU * BOB_HZ)
+	for id in tile_nodes:
+		var amount: float = tile_hover[id]
+		var target := 1.0 if id == hovered_tile else 0.0
+		if amount == target and target == 0.0:
+			continue
+		amount = move_toward(amount, target, delta * 6.0)
+		tile_hover[id] = amount
+		var lift := amount * BOB_HEIGHT * wave
+		var tile: Node3D = tile_nodes[id]
+		tile.position.y = tile_base_y[id] + lift
+		(tile.get_node("Model/hex_grass") as MeshInstance3D).material_override.set_shader_parameter("hover", amount * (0.85 + 0.15 * wave))
+		if pieces.has(id) and not moving:
+			pieces[id].position.y = rules.positions[id].y + lift
+	for marker in target_layer.get_children():
+		var id: int = marker.get_meta("tile", -1)
+		if id >= 0:
+			marker.position.y = rules.positions[id].y + 0.012 + tile_lift(id)
+	if hover_ring.visible and hovered_tile >= 0:
+		hover_ring.position.y = rules.positions[hovered_tile].y + 0.018 + tile_lift(hovered_tile)
+
+
 func _physics_process(_delta: float) -> void:
 	if pending_click.x >= 0.0:
 		var clicked := pick_tile(pending_click)
@@ -467,6 +551,8 @@ func _physics_process(_delta: float) -> void:
 				play_action(human_targets[clicked])
 
 	var hovered := -1 if camera_dragging or camera_rotating else pick_tile(mouse_position)
+	hovered_tile = hovered
+	hover_fill.visible = false
 	hover_ring.visible = human_targets.has(hovered)
 	if hover_ring.visible:
 		hover_ring.position = rules.positions[hovered] + Vector3.UP * 0.018

@@ -12,11 +12,13 @@ void vertex() {
 	VERTEX.y += sin(stroke) * 0.004;
 }
 
+uniform float glow_scale = 1.0;
+
 void fragment() {
 	vec3 pink = vec3(0.83, 0.12, 0.33);
 	float mottling = 0.5 + 0.5 * sin(model_position.x * 113.0 + sin(model_position.z * 87.0) * 2.0);
 	float rim = pow(1.0 - abs(dot(normalize(NORMAL), normalize(VIEW))), 2.5);
 	ALBEDO = mix(pink * 0.65, pink, mottling);
 	ROUGHNESS = 0.46;
-	EMISSION = pink * (0.09 + rim * 0.38);
+	EMISSION = vec3(1.0, 0.25, 0.6) * (0.25 + rim * 1.6) * glow_scale;
 }
