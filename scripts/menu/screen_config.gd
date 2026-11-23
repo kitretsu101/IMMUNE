@@ -176,5 +176,4 @@ func _reset() -> void:
 
 func _start() -> void:
 	Config.save_settings()
-	Sfx.play_ui("ui_start")
 	get_tree().change_scene_to_file(GAME_SCENE)

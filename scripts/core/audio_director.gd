@@ -197,7 +197,7 @@ func play_ui(sound_name: String) -> void:
 	for player in _ui_players:
 		if not player.playing:
 			player.stream = stream
-			player.pitch_scale = 1.0
+			player.pitch_scale = 0.85
 			player.play()
 			return
 
@@ -223,7 +223,7 @@ func play_world(sound_name: String, bus: String, priority: int, tile := -1, min_
 		return
 	voice.stream = stream
 	voice.bus = bus
-	voice.pitch_scale = (1.0 + _rng.randf_range(-0.06, 0.06)) * (1.0 + minf(0.25, (speed - 1.0) * 0.03)) if Config.sound_variation else 1.0
+	voice.pitch_scale = 0.82 * ((1.0 + _rng.randf_range(-0.05, 0.05)) * (1.0 + minf(0.12, (speed - 1.0) * 0.015)) if Config.sound_variation else 1.0)
 	voice.volume_db = 0.0 if priority >= Priority.HIGH else -3.0
 	voice.set_meta("priority", priority)
 	voice.global_position = _screen_position(tile)
@@ -280,7 +280,9 @@ func _on_sim_event(event: Dictionary) -> void:
 			return
 	if not EVENT_MAP.has(kind):
 		return
-	var entry: Array = EVENT_MAP[kind]
+	var entry: Array = EVENT_MAP[kind].duplicate()
+	if kind == "pickup" and event.team == Sim.IMMUNE:
+		entry[1] = "Immune"
 	var is_notify: bool = entry[1] == "Notify"
 	if is_notify and not Config.event_notifications:
 		return
@@ -338,7 +340,7 @@ func _on_bubble() -> void:
 			if not player.playing:
 				player.stream = stream
 				player.bus = "Ambient"
-				player.pitch_scale = _rng.randf_range(0.8, 1.4)
+				player.pitch_scale = _rng.randf_range(0.6, 0.95)
 				player.play()
 	_bubble_timer.start(_rng.randf_range(0.8, 3.2) * (1.0 + (1.0 - clampf(_infection * 2.0, 0.0, 1.0)) * 0.5))
 

@@ -108,7 +108,7 @@ func _caption(event: Dictionary) -> void:
 		return
 	var at := tile_board.positions[tile]
 	match event.type:
-		"pickup", "eat": FxBurst.float_text(fx_root, at, "+NUTRIENTS", Neon.YELLOW, 36)
+		"pickup", "eat": FxBurst.float_text(fx_root, at, "+NUTRIENTS" if event.team == Sim.BACTERIA else "+HEAL", Neon.YELLOW if event.team == Sim.BACTERIA else Neon.GREEN, 36)
 		"infect_ok": FxBurst.float_text(fx_root, at, "INFECTED!", Neon.RED)
 		"infect_fail": FxBurst.float_text(fx_root, at, "resisted", Neon.TEXT_MUTED, 34)
 		"mutation": FxBurst.float_text(fx_root, tile_board.positions[event.tile], "MUTATION: %s" % str(event.get("trait", "")).to_upper(), Neon.PURPLE)

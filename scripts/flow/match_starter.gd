@@ -23,7 +23,6 @@ func _ready() -> void:
 			Config.tutorial_refs = TutorialStage.stage(rounds.world.state)
 			rounds.world.world_rebuilt.emit()
 			rounds.world.touch()
-		Sfx.play_ui("ui_start")
 
 
 func go_to_menu() -> void:
