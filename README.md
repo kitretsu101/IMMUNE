@@ -1,38 +1,47 @@
 # IMMUNE
 
-IMMUNE is a single-player, turn-based strategy game on a 3D hex board. You control the blue T cells and defend seven gold human cells in the center. You win by eliminating all pink bacteria. The bacteria win by infecting all seven human cells.
+A dark-neon biological strategy simulation on a 10×10 hex board: T cells defend seven human cells against evolving bacteria. Godot 4.7, Compatibility renderer.
 
-## Run the game
+## Run
 
-The project was tested with Godot 4.7.2 and uses the Compatibility renderer.
+Open `project.godot` in Godot 4.7 and press F5. The main scene is `scenes/menu/main_menu.tscn`.
 
-1. Clone the repository with `git clone https://github.com/kitretsu101/IMMUNE.git`.
-2. In Godot's Project Manager, choose **Import** and select `project.godot`.
-3. Open the project and press **F5** to play.
+## Modes
 
-## How to play
+Human vs AI (pick a side), AI vs AI, Human vs Human, Sandbox (no win condition; hover a tile and press 1 bacterium, 2 T cell, Del remove, 3 infect, 4 biofilm, 5 nutrients) and Experiment Mode (headless batches with win rates).
 
-- **Move.** Select a T cell, choose **Move**, then click a highlighted hex. A cell can move up to four hexes, depending on its individual range, and can cross only empty hexes. Human cells stay on their starting tiles until infected and block T-cell movement.
-- **Clone.** Select a T cell, choose **Clone**, then click a green hex next to it. The parent stays in place and creates one copy. During clonal evolution, one trait on the copy rolls −1, 0, or +1 within its allowed range. T cells can vary in movement range. For bacteria, either movement range or infectibility can vary.
-- **Capture and infect.** A T cell consumes the bacterium it lands on. A bacterium can consume a T cell that stands in its way. When a bacterium lands on a human cell, its infectibility sets how many human cells it can infect, including the one it lands on and any adjacent human cells. Infected human cells are removed from the board. Hover over a bacterium on your turn to see its stats.
+## Rules in short
 
-Each side takes one action per turn. A side with no legal action passes. The game draws if both sides pass consecutively.
+Each round: immune turn, bacteria turn, then an end-of-round phase (feeding, antibiotics, tissue changes, signalling, reproduction with mutation). Bacteria win by infecting all human cells or wiping out the immune cells. Immune cells win by eliminating all bacteria. Reaching the round limit is a draw.
+
+Bacteria carry antigen, health, infectivity, reproduction, immune evasion, resistance, energy, inherited traits and temporary effects. One trait may mutate per offspring, and a rare antigen shift creates a new strain. Biofilm protects but slows reproduction. T cells clone with ±1 trait drift and gain memory against antigens they kill.
+
+## AI
+
+Pipeline per decision (Hybrid): propositional logic (legal actions) → BFS reach → A* routes → fuzzy priorities (growth, survival, infection / defend, hunt, expand) → minimax on threats → MCTS for long-term value. Fuzzy, Minimax, MCTS and Greedy can also be chosen alone, per side. Every decision is logged.
+
+## Tutorial
+
+Main menu → Tutorial starts a small match with a 17-step guided tour. Everything except the part being explained is darkened, and a dialog explains it: the board and tissue colours, T cells, bacteria, mutation and how to spot a mutant (purple ring, MUTANT tag, caption, inspector, Evolution view), infection, nutrients and hunger, biofilm, oxygen and antibiotics, immune activation and memory, every HUD panel, the actions and the simulation controls.
+
+## Reading the board
+
+Organism colours never change (cyan T cells, green bacteria). A purple ring and tag marks mutants, a yellow tag marks hungry bacteria. Floating captions announce events: INFECTED!, MUTATION, SPLIT, CLONE, damage numbers, MISS, ELIMINATED, CLEANSED. Health bars have an orange outline.
 
 ## Controls
 
-| Input | Action |
-| --- | --- |
-| Left-click | Select a T cell or choose a highlighted destination |
-| `M` / `C` | Switch to Move / Clone |
-| Right-drag | Pan the camera |
-| Middle-drag | Orbit the camera |
-| Scroll | Zoom |
-| `R` | Restart the match |
+Left-click select / target · M Move/Attack · C Clone · I Infect · B Biofilm · E Reproduce · W Wait · Space end turn · Tab next organism · P pause · . step · [ ] speed · L log window · right-drag pan · middle-drag orbit · wheel zoom.
 
-## Bacterial AI
+## Code layout
 
-The bacteria use two-ply minimax. The AI rewards infecting human cells and moving closer to those still healthy. It checks whether T cells can capture bacteria in response and accounts for the probability of each clonal evolution outcome.
+No master script: each node hosts its own script with editor options.
+`scripts/sim` pure simulation (no nodes) · `scripts/ai` decision modules · `scripts/flow` turn flow, clock, human input, saves · `scripts/board` tiles, organisms, particles · `scripts/hud`, `scripts/menu`, `scripts/log` UI · `scripts/core` autoloads (Events, Config, GameLog, Sfx).
+Scenes are generated by `tools/build_game_scene.gd` and `tools/build_menu_scene.gd` (`godot --headless res://tools/build_game_scene.tscn`). Placeholder audio is generated by `godot --headless -s tools/generate_sfx.gd`; replace any file in `assets/audio` with a real recording of the same name.
 
-## Asset credits
+## Credits
 
-See [asset credits](assets/CREDITS.md) for model sources and licenses.
+- **Hex tile and 3D models:** see `assets/CREDITS.md` (KayKit Medieval Hexagon pack, T cell, bacteria and human cell models, with their original licences).
+- **Sound effects and ambience:** original placeholder sounds synthesised by `tools/generate_sfx.gd`. No third-party samples. Released under CC0.
+- **Music:** two original ambient loops (`assets/audio/music/menu.wav`, `game.wav`) synthesised by `tools/generate_music.gd` from sine waves. No third-party samples. Released under CC0. To use other open-licensed tracks (for example CC0 music from OpenGameArt.org or Kevin MacLeod's CC-BY catalogue), replace those two files and add the artist and licence here.
+- **Menu background:** `assets/ui/menu_bg.png`, generated procedurally for this project (CC0).
+- **Engine:** Godot 4.7 (MIT).

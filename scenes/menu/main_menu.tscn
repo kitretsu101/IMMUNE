@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/menu/menu_router.gd" id="1_vovv2"]
+[ext_resource type="Script" path="res://scripts/menu/menu_backdrop.gd" id="2_1k4da"]
+[ext_resource type="Script" path="res://scripts/menu/screen_main.gd" id="3_bbqo6"]
+[ext_resource type="Script" path="res://scripts/menu/screen_mode.gd" id="4_d4hu8"]
+[ext_resource type="Script" path="res://scripts/menu/screen_config.gd" id="5_p1nwe"]
+[ext_resource type="Script" path="res://scripts/menu/screen_load.gd" id="6_prbor"]
+[ext_resource type="Script" path="res://scripts/menu/screen_experiment.gd" id="7_27h4x"]
+[ext_resource type="Script" path="res://scripts/menu/screen_stats.gd" id="8_gdhp0"]
+[ext_resource type="Script" path="res://scripts/menu/screen_settings.gd" id="9_pstia"]
+
+[node name="MainMenu" type="Control" unique_id=322695744]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_vovv2")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=435491548]
+layout_mode = 0
+script = ExtResource("2_1k4da")
+
+[node name="MainScreen" type="Control" parent="." unique_id=328797726 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("3_bbqo6")
+router = NodePath("..")
+
+[node name="ModeScreen" type="Control" parent="." unique_id=744190047 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("4_d4hu8")
+router = NodePath("..")
+
+[node name="ConfigScreen" type="Control" parent="." unique_id=2020444983 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("5_p1nwe")
+router = NodePath("..")
+
+[node name="LoadScreen" type="Control" parent="." unique_id=1485994442 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("6_prbor")
+router = NodePath("..")
+
+[node name="ExperimentScreen" type="Control" parent="." unique_id=2008164481 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("7_27h4x")
+router = NodePath("..")
+
+[node name="StatsScreen" type="Control" parent="." unique_id=1211289759 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("8_gdhp0")
+router = NodePath("..")
+
+[node name="SettingsScreen" type="Control" parent="." unique_id=1322889518 node_paths=PackedStringArray("router")]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("9_pstia")
+router = NodePath("..")

@@ -11,14 +11,22 @@ config_version=5
 [application]
 
 config/name="IMMUNE"
-run/main_scene="res://scenes/node_3d.tscn"
+run/main_scene="res://scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Events="*res://scripts/core/events.gd"
+Config="*res://scripts/core/config.gd"
+GameLog="*res://scripts/core/log_backend.gd"
+Sfx="*res://scripts/core/audio_director.gd"
 
 [display]
 
 window/size/viewport_width=1200
 window/size/viewport_height=800
+window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" path="res://assets/kaykit_medieval_hexagon/tiles/base/hex_grass.gltf" id="1_model"]
 
-[ext_resource type="Shader" path="res://scenes/neon_tile.gdshader" id="3_shader"]
+[ext_resource type="Shader" path="res://scenes/shaders/tissue_tile.gdshader" id="3_shader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_grass"]
 shader = ExtResource("3_shader")
