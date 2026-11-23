@@ -37,7 +37,7 @@ static func _build() -> Theme:
 	font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
 	font.oversampling = 0.0
 	theme.default_font = font
-	theme.default_font_size = 15
+	theme.default_font_size = 16
 	for type in ["Label", "RichTextLabel", "Button", "CheckBox", "CheckButton", "LineEdit", "OptionButton", "TabContainer", "SpinBox"]:
 		theme.set_color("font_color", type, Neon.TEXT)
 	theme.set_color("font_color", "Label", Neon.TEXT)

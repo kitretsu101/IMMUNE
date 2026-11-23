@@ -196,7 +196,14 @@ func _on_event(event: Dictionary) -> void:
 			if views.has(event.org):
 				views[event.org].flash(Neon.YELLOW, 1.2)
 				FxBurst.burst(fx_root, views[event.org].position + Vector3.UP * 0.2, Neon.YELLOW, 8, 1.2, 0.5, 0.07)
-		"antigen_detected", "memory":
+		"memory":
+			if views.has(event.org):
+				var gold := Color(1.0, 0.82, 0.45)
+				views[event.org].flash(gold, 1.8)
+				FxBurst.ring(fx_root, views[event.org].position, gold, 2.2, 1.0, 1.8)
+				FxBurst.burst(fx_root, views[event.org].position + Vector3.UP * 0.4, gold, 26, 2.0, 1.0, 0.1)
+				FxBurst.float_text(fx_root, views[event.org].position, "MEMORY: ANTIGEN %s" % Sim.ANTIGENS[int(event.get("antigen", 0))], gold, 42)
+		"antigen_detected":
 			if views.has(event.org):
 				FxBurst.ring(fx_root, views[event.org].position, Neon.CYAN, 1.8, 0.8, 1.2)
 		"pickup", "eat":

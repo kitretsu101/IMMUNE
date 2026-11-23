@@ -2,7 +2,7 @@ class_name Evolution
 extends RefCounted
 ## Inheritance and mutation for offspring and immune clones.
 
-const BACTERIA_TRAITS := ["infectivity", "reproduction", "evasion", "resistance"]
+const BACTERIA_TRAITS := ["infectivity", "reproduction", "evasion"]
 
 
 ## Returns {"child": Organism, "events": Array}. At most one trait mutates per offspring.

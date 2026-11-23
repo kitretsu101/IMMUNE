@@ -45,7 +45,7 @@ static func infectable(state: WorldState, organism: Organism, tile: int) -> bool
 
 
 static func reproduce_chance(state: WorldState, organism: Organism) -> float:
-	var oxygen_factor := 0.6 + 0.8 * state.oxygen
+	var oxygen_factor := 1.0
 	var p := organism.reproduction / 10.0 * state.setup.reproduction_rate * oxygen_factor
 	p *= organism.effect_value("BiofilmCost", 1.0) * organism.effect_value("Resting", 1.0)
 	return clampf(p, 0.05, 0.98)

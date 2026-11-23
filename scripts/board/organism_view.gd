@@ -34,6 +34,7 @@ var _bar_opacity := 0.0
 var _motion: Tween
 var _fx_tween: Tween
 var facing := 0.0
+var _memory := false
 
 
 func build(organism: Organism, model_scene: PackedScene, rim_shader: Shader, ring_shader: Shader,
@@ -190,16 +191,34 @@ func refresh(organism: Organism) -> void:
 		tags.append("ACTIVE")
 	tag_label.text = " · ".join(tags)
 	tag_label.modulate = tag_color
-	var ring_tint := Neon.PURPLE if not organism.mutations.is_empty() else color
+	var had_memory := _memory
+	_memory = organism.team == Sim.IMMUNE and not organism.memory.is_empty()
+	if _memory:
+		var names: PackedStringArray = []
+		for key in organism.memory:
+			names.append(Sim.ANTIGENS[int(key)])
+		tags.append("MEMORY: " + ",".join(names))
+		tag_label.text = " · ".join(tags)
+		tag_label.modulate = Color(1.0, 0.82, 0.45)
+	if _memory != had_memory:
+		_apply_color_only()
+	var ring_tint := Neon.PURPLE if not organism.mutations.is_empty() else (Color(1.0, 0.82, 0.45) if _memory else color)
 	_ring_material.set_shader_parameter("ring_color", Vector3(ring_tint.r, ring_tint.g, ring_tint.b))
 	var activated := organism.has_effect("Activated")
 	var target_boost := 0.3 if activated else 0.0
 	_set_boost(target_boost + (0.35 if _selected else 0.0) + (0.2 if _hovered else 0.0))
 
 
+func _display_color() -> Color:
+	return Color(1.0, 0.82, 0.45) if _memory else color
+
+
 func _apply_color_only() -> void:
+	var shown := _display_color()
 	for rim in _rim_materials:
-		rim.set_shader_parameter("rim_color", Vector3(color.r, color.g, color.b))
+		rim.set_shader_parameter("rim_color", Vector3(shown.r, shown.g, shown.b))
+		rim.set_shader_parameter("pulse_speed", 3.6 if _memory else 2.0)
+		rim.set_shader_parameter("rim_energy", 2.3 if _memory else 1.7)
 	if _swim_material:
 		_swim_material.set_shader_parameter("body_color", Vector3(color.r, color.g, color.b))
 	pass

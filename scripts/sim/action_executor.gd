@@ -91,7 +91,7 @@ static func _kill(state: WorldState, killer: Organism, victim: Organism, events:
 		killer.memory[victim.antigen] = mini(3, int(killer.memory.get(victim.antigen, 0)) + 1)
 		events.append(Ev.make("memory", "Combat",
 			"%s formed immune memory against antigen %s." % [killer.label(), victim.antigen_name()],
-			state.round, {"org": killer.id, "tile": killer.tile, "team": Sim.IMMUNE}))
+			state.round, {"org": killer.id, "tile": killer.tile, "team": Sim.IMMUNE, "antigen": victim.antigen, "level": killer.memory[victim.antigen]}))
 	events.append(Ev.make("death", "Death", "%s eliminated by %s." % [victim.label(), killer.label()],
 		state.round, {"org": victim.id, "other": killer.id, "tile": tile, "team": victim.team,
 			"victim_team": victim.team, "sev": Ev.NOTABLE}))

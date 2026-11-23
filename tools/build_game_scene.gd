@@ -202,11 +202,10 @@ func _build_hud(world: Node, rounds: Node, clock: Node, human: Node, persistence
 	organism_panel.world = world
 	organism_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	organism_panel.size_flags_vertical = Control.SIZE_SHRINK_END
-	var actions := _node(PanelContainer, "Actions", row, "res://scripts/hud/hud_action_bar.gd")
+	var actions := _node(PanelContainer, "Actions", layout, "res://scripts/hud/hud_action_bar.gd")
 	actions.world = world
 	actions.rounds = rounds
 	actions.human = human
-	actions.size_flags_vertical = Control.SIZE_SHRINK_END
 	var toolbar := _node(PanelContainer, "Toolbar", dock, "res://scripts/hud/hud_toolbar.gd")
 	toolbar.world = world
 	toolbar.rounds = rounds
@@ -217,6 +216,7 @@ func _build_hud(world: Node, rounds: Node, clock: Node, human: Node, persistence
 	layout.left_panel = left
 	layout.right_panel = right
 	layout.bottom_dock = dock
+	layout.action_panel = actions
 	var tutorial := _node(Control, "Tutorial", layout, "res://scripts/hud/hud_tutorial.gd")
 	tutorial.top_bar = top
 	tutorial.left_panel = left
@@ -225,12 +225,13 @@ func _build_hud(world: Node, rounds: Node, clock: Node, human: Node, persistence
 	tutorial.action_bar = actions
 	tutorial.event_log = log
 	tutorial.toolbar = toolbar
-	tutorial.board_gap = gap
+	tutorial.world = world
+	tutorial.camera = camera
 	var banner := _node(Control, "Banner", layout, "res://scripts/hud/hud_banner.gd")
 	banner.rounds = rounds
 	var toasts := _node(VBoxContainer, "Toasts", layout, "res://scripts/hud/hud_toasts.gd")
 	toasts.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	toasts.position = Vector2(-170, 74)
+	toasts.position = Vector2(-170, 230)
 	toasts.size = Vector2(340, 10)
 	var result := _node(Control, "Result", layout, "res://scripts/hud/hud_result_overlay.gd")
 	result.world = world

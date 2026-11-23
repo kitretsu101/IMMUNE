@@ -7,6 +7,7 @@ extends Control
 @export var left_panel: Control
 @export var right_panel: Control
 @export var bottom_dock: Control
+@export var action_panel: Control
 
 var _left_button: IconButton
 var _right_button: IconButton
@@ -16,6 +17,9 @@ var _dirty := true
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if action_panel:
+		action_panel.resized.connect(_mark)
+		action_panel.visibility_changed.connect(_mark)
 	for control in [top_bar, left_panel, right_panel, bottom_dock]:
 		(control as Control).resized.connect(_mark)
 		(control as Control).visibility_changed.connect(_mark)
@@ -52,6 +56,8 @@ func _process(_delta: float) -> void:
 	var left := left_panel.get_global_rect().end.x if left_panel.visible else 0.0
 	var right := viewport.x - right_panel.get_global_rect().position.x if right_panel.visible else 0.0
 	var top := top_bar.get_global_rect().end.y
+	if action_panel and action_panel.visible:
+		top = maxf(top, action_panel.get_global_rect().end.y + 40.0)
 	var bottom := viewport.y - bottom_dock.get_global_rect().position.y
 	camera.set_safe_margins(left + 8.0, top + 8.0, right + 8.0, bottom + 8.0)
 	var y := top + 14.0

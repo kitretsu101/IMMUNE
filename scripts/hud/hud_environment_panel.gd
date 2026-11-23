@@ -41,18 +41,11 @@ func _ready() -> void:
 	column.add_child(UiKit.spacer(0, 4))
 	column.add_child(UiKit.heading("Environment"))
 	_meters["Nutrients"] = UiKit.meter_row(column, "Nutrients", Neon.YELLOW)
-	_meters["Oxygen"] = UiKit.meter_row(column, "Oxygen", Neon.CYAN)
-	_meters["Antibiotic"] = UiKit.meter_row(column, "Antibiotic", Neon.PURPLE)
 	_meters["Core"] = UiKit.meter_row(column, "Human cells", Neon.RED)
 	_sandbox_box = UiKit.vbox(4)
 	column.add_child(_sandbox_box)
 	_sandbox_box.add_child(UiKit.heading("Sandbox tools"))
 	_sandbox_box.add_child(UiKit.label("Hover a tile, then press:\n1 bacterium · 2 T cell · Del remove\n3 infect · 4 biofilm · 5 nutrients", 12, Neon.TEXT_MUTED))
-	var dose := UiKit.button("Add antibiotic dose", "", "Raises antibiotic concentration")
-	dose.pressed.connect(func() -> void:
-		world.state.antibiotic = minf(1.0, world.state.antibiotic + 0.25)
-		world.touch())
-	_sandbox_box.add_child(dose)
 	var feed := UiKit.button("Feed the board", "", "Adds nutrients everywhere")
 	feed.pressed.connect(func() -> void:
 		for tile in world.state.count:
@@ -87,6 +80,4 @@ func _refresh() -> void:
 	_set_meter("Damaged", state.tissue_fraction(Sim.Tissue.DAMAGED))
 	_set_meter("Destroyed", state.tissue_fraction(Sim.Tissue.DESTROYED))
 	_set_meter("Nutrients", state.average_nutrient() / Balance.NUTRIENT_CAP)
-	_set_meter("Oxygen", state.oxygen)
-	_set_meter("Antibiotic", state.antibiotic)
 	_set_meter("Core", float(state.core_infected()) / maxf(1.0, state.core.size()), "%d / %d" % [state.core_infected(), state.core.size()])

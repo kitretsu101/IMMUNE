@@ -19,6 +19,10 @@ func _ready() -> void:
 		persistence.load_slot(slot)
 	else:
 		rounds.start_match(Config.setup)
+		if Config.tutorial:
+			Config.tutorial_refs = TutorialStage.stage(rounds.world.state)
+			rounds.world.world_rebuilt.emit()
+			rounds.world.touch()
 		Sfx.play_ui("ui_start")
 
 

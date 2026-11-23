@@ -32,7 +32,7 @@ func catalog() -> Array:
 	var add := func(sound_name: String, variants: int, fn: Callable) -> void:
 		list.append({"name": sound_name, "variants": variants, "fn": fn})
 	# UI
-	add.call("ui_hover", 1, func(v: int) -> PackedFloat32Array: return _tone(2400, 0.03, "sine", 0.18, 0.002, 0.02))
+	add.call("ui_hover", 1, func(v: int) -> PackedFloat32Array: return _tone(520, 0.03, "sine", 0.18, 0.002, 0.02))
 	add.call("ui_click", 1, func(v: int) -> PackedFloat32Array: return _mix(_noise(0.012, 0.35, 0.5), _tone(700, 0.05, "sine", 0.35, 0.002, 0.04, 0.7)))
 	add.call("ui_open", 1, func(v: int) -> PackedFloat32Array: return _tone(420, 0.14, "sine", 0.35, 0.01, 0.06, 2.0))
 	add.call("ui_close", 1, func(v: int) -> PackedFloat32Array: return _tone(800, 0.14, "sine", 0.3, 0.01, 0.06, 0.5))
@@ -88,6 +88,8 @@ func catalog() -> Array:
 	add.call("notify_immune_collapse", 1, func(v: int) -> PackedFloat32Array: return _arp([392, 311, 233, 175, 117], 0.12, "saw", 0.2, 0.5))
 	add.call("notify_victory", 1, func(v: int) -> PackedFloat32Array: return _echo(_arp([523, 659, 784, 1047, 1319, 1568], 0.12, "tri", 0.4, 0.8), 0.25, 0.35))
 	add.call("notify_defeat", 1, func(v: int) -> PackedFloat32Array: return _echo(_arp([392, 349, 311, 262, 196, 130], 0.17, "saw", 0.22, 0.8), 0.3, 0.35))
+	add.call("pickup", 2, func(v: int) -> PackedFloat32Array: return _echo(_mix(_tone(330 + v * 40, 0.14, "sine", 0.4, 0.005, 0.1, 1.5), _tone(494 + v * 40, 0.2, "sine", 0.35, 0.005, 0.14), 0.07), 0.12, 0.3))
+	add.call("memory_gain", 1, func(v: int) -> PackedFloat32Array: return _mix(_tone(262, 0.4, "sine", 0.4, 0.02, 0.25), _arp([330, 392, 523], 0.09, "sine", 0.3, 0.4), 0.0))
 	add.call("amb_bubble", 3, func(v: int) -> PackedFloat32Array: return _tone(300 + v * 160 + rng.randf_range(0, 80), 0.09, "sine", 0.18, 0.004, 0.07, 1.8))
 	return list
 
@@ -110,7 +112,6 @@ func _wave(kind: String, phase: float) -> float:
 
 func _tone(freq: float, dur: float, kind := "sine", vol := 0.4, attack := 0.005, release := 0.05,
 		sweep := 1.0, vib_hz := 0.0, vib_depth := 0.0) -> PackedFloat32Array:
-	freq = _soften(freq)
 	var count := int(dur * RATE)
 	var out := PackedFloat32Array()
 	out.resize(count)
@@ -118,7 +119,7 @@ func _tone(freq: float, dur: float, kind := "sine", vol := 0.4, attack := 0.005,
 	for i in count:
 		var t := float(i) / RATE
 		var progress := t / dur
-		var f := freq * lerpf(1.0, sweep, progress)
+		var f := _soften(freq * lerpf(1.0, sweep, progress))
 		if vib_hz > 0.0:
 			f *= 1.0 + sin(t * TAU * vib_hz) * vib_depth * 0.1
 		phase += f / RATE
@@ -274,6 +275,6 @@ func ambient_lab() -> PackedFloat32Array:
 		for i in n:
 			var t := float(i) / RATE
 			var hum := sin(t * TAU * 120.0) * 0.5 + sin(t * TAU * 240.0) * 0.18
-			var shimmer := sin(t * TAU * 1760.0) * 0.03 * (0.5 + 0.5 * sin(t * TAU * 0.5))
+			var shimmer := sin(t * TAU * 440.0) * 0.02 * (0.5 + 0.5 * sin(t * TAU * 0.5))
 			out[i] = (hum * 0.07 + shimmer)
 		return out)

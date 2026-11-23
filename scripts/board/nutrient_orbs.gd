@@ -32,6 +32,7 @@ func _ready() -> void:
 	Events.settings_changed.connect(func() -> void: _material.set_shader_parameter("glow_scale", Config.glow_level))
 	_material.set_shader_parameter("glow_scale", Config.glow_level)
 	world.world_rebuilt.connect(_clear)
+	Events.sim_event.connect(_on_event)
 
 
 func _clear() -> void:
@@ -103,10 +104,33 @@ func _spawn(tile: int) -> void:
 		moon.mesh = small
 		moon.position = Vector3(orb_radius * 1.7, 0.0, 0.0).rotated(Vector3.UP, index * PI)
 		moon.set_meta("orbit", index)
+		var trail := TrailRibbon.new()
+		trail.color = Color(1.0, 0.85, 0.25)
+		trail.width = 0.14
+		trail.lifetime = 0.55
+		trail.height = 0.0
+		trail.emitting = true
+		moon.add_child(trail)
 		body.add_child(moon)
 	orb.add_child(body)
 	orb.add_child(_sparkles())
+	var aura := MeshInstance3D.new()
+	aura.name = "Aura"
+	var quad := QuadMesh.new()
+	quad.size = Vector2(2.6, 2.6)
+	quad.orientation = PlaneMesh.FACE_Y
+	aura.mesh = quad
+	var aura_material := ShaderMaterial.new()
+	aura_material.shader = load("res://scenes/shaders/aura.gdshader")
+	aura_material.set_shader_parameter("glow_scale", Config.glow_level)
+	aura_material.set_shader_parameter("collect", 0.0)
+	aura.material_override = aura_material
+	aura.top_level = true
+	aura.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	orb.add_child(aura)
+	aura.set_meta("ground", tile_board.positions[tile] + Vector3.UP * 0.07)
 	add_child(orb)
+	aura.global_position = aura.get_meta("ground")
 	_orbs[tile] = orb
 	if Config.animations:
 		body.scale = Vector3.ONE * 0.1
@@ -144,6 +168,47 @@ func _sparkles() -> CPUParticles3D:
 	particles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	particles.visible = Config.particles
 	return particles
+
+
+func _ready_events() -> void:
+	Events.sim_event.connect(_on_event)
+
+
+func _on_event(event: Dictionary) -> void:
+	if event.type != "pickup" and event.type != "eat":
+		return
+	var tile: int = event.tile
+	if not _orbs.has(tile):
+		return
+	var target := tile_board.positions[tile] + Vector3.UP * 0.4
+	_collect(tile, target)
+
+
+## Pickup animation: the orb is drawn into the collector along a curved light trail while its aura flashes.
+func _collect(tile: int, target: Vector3) -> void:
+	var orb: Node3D = _orbs[tile]
+	_orbs.erase(tile)
+	var aura := orb.get_node("Aura") as MeshInstance3D
+	var aura_material := aura.material_override as ShaderMaterial
+	var body := orb.get_node("Body") as Node3D
+	FxBurst.ring(fx_root if fx_root else self, tile_board.positions[tile], Neon.YELLOW, 1.6, 0.6, 1.8)
+	FxBurst.burst(fx_root if fx_root else self, orb.global_position, Neon.YELLOW, 22, 2.2, 0.8, 0.11)
+	var trail := TrailRibbon.new()
+	trail.color = Color(1.0, 0.9, 0.3)
+	trail.width = 0.26
+	trail.lifetime = 0.5
+	trail.height = 0.0
+	trail.emitting = true
+	body.add_child(trail)
+	if not Config.animations:
+		orb.queue_free()
+		return
+	var tween := orb.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(aura_material, "shader_parameter/collect", 1.0, 0.45)
+	tween.tween_property(body, "scale", Vector3.ONE * 0.2, 0.5).set_ease(Tween.EASE_IN)
+	tween.tween_property(orb, "position", target - Vector3.ZERO + Vector3.UP * 0.5, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.chain().tween_callback(orb.queue_free)
 
 
 func _remove(tile: int) -> void:

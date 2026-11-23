@@ -8,6 +8,7 @@ const SAVE_DIR := "user://saves"
 var setup := GameSetup.new()
 var load_pending := ""
 var tutorial := false
+var tutorial_refs: Dictionary = {}
 var view_mode := Events.View.NORMAL
 
 # Audio
@@ -77,7 +78,7 @@ func save_settings() -> void:
 func _apply_window() -> void:
 	if DisplayServer.get_name() == "headless":
 		return
-	var wanted := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
+	var wanted := DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
 	if DisplayServer.window_get_mode() != wanted:
 		DisplayServer.window_set_mode(wanted)
 

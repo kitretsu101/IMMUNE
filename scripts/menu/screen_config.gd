@@ -51,7 +51,7 @@ func _ready() -> void:
 		button.pressed.connect(_apply_difficulty.bind(index))
 		presets.add_child(button)
 		_difficulty_buttons.append(button)
-	var hint := UiKit.label("Presets adjust nutrients, antibiotics and bacterial strength; fine-tune below.", 13, Neon.TEXT_DIM)
+	var hint := UiKit.label("Presets adjust nutrients and bacterial strength; fine-tune below.", 13, Neon.TEXT_DIM)
 	presets.add_child(hint)
 	_tabs = TabContainer.new()
 	_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -90,8 +90,6 @@ func _build_tabs() -> void:
 	env.add_section("Board and resources")
 	env.add_number("board_size", "Board dimensions (N × N)", 6, 10, 1, "Playable area. The board is always centred.")
 	env.add_number("nutrient_level", "Initial nutrient distribution", 0.0, 1.0, 0.05, "How much food lies on the board at the start.", true)
-	env.add_number("oxygen", "Oxygen availability", 0.2, 1.0, 0.05, "Faster bacterial reproduction when oxygen is high.", true)
-	env.add_number("antibiotic", "Antibiotic concentration", 0.0, 1.0, 0.05, "Damages bacteria each round unless they evolve resistance.", true)
 	env.add_section("Infection")
 	env.add_number("infection_sites", "Initial infection locations", 1, 4, 1, "How many corners bacteria start from.")
 	env.add_choice("difficulty", "Environmental difficulty", ["Easy", "Normal", "Hard"], "Easy weakens bacteria, Hard strengthens them.")
@@ -103,7 +101,6 @@ func _build_tabs() -> void:
 	bact.add_number("bact_infectivity", "Infectivity", 1, 10, 1, "Chance to infect tissue.")
 	bact.add_number("bact_reproduction", "Reproduction efficiency", 1, 10, 1, "Chance to reproduce each round when fed.")
 	bact.add_number("bact_evasion", "Immune evasion", 1, 10, 1, "Reduces the chance immune cells hit.")
-	bact.add_number("bact_resistance", "Antibiotic resistance", 0, 10, 1)
 	bact.add_section("Evolution")
 	bact.add_number("mutation_rate", "Mutation rate", 0.0, 1.0, 0.05, "Chance that offspring mutate one trait.", true)
 	bact.add_number("reproduction_rate", "Reproduction rate multiplier", 0.5, 2.0, 0.05)
@@ -151,17 +148,14 @@ func _apply_difficulty(index: int) -> void:
 	match index:
 		0:
 			setup.nutrient_level = 0.35
-			setup.antibiotic = 0.2
 			setup.mutation_rate = 0.2
 			setup.bact_pop = 2
 		1:
 			setup.nutrient_level = 0.5
-			setup.antibiotic = 0.0
 			setup.mutation_rate = 0.3
 			setup.bact_pop = 2
 		2:
 			setup.nutrient_level = 0.7
-			setup.antibiotic = 0.0
 			setup.mutation_rate = 0.4
 			setup.bact_pop = 3
 	for form in _forms:

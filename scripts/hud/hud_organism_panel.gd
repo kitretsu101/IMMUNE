@@ -44,7 +44,7 @@ func _ready() -> void:
 	root.add_child(_body)
 	_add_bar("Health", Neon.GREEN)
 	_add_bar("Energy", Neon.YELLOW)
-	for key in ["Position", "Generation", "Antigen", "Infectivity", "Reproduction", "Immune evasion", "Resistance", "Attack", "Detection", "Move range", "Action", "Target", "AI algorithm", "Mutations", "Last decision", "Inherited from"]:
+	for key in ["Position", "Generation", "Antigen", "Infectivity", "Reproduction", "Immune evasion", "Memory", "Attack", "Detection", "Move range", "Action", "Target", "AI algorithm", "Mutations", "Last decision", "Inherited from"]:
 		var cell := UiKit.hbox(6)
 		cell.add_child(UiKit.label(key, 13, Neon.TEXT_MUTED))
 		var value := UiKit.label("-", 13, Neon.TEXT)
@@ -117,7 +117,13 @@ func _refresh() -> void:
 	_put("Infectivity", "%d / 10" % organism.infectivity, bacterium)
 	_put("Reproduction", "%d / 10" % organism.reproduction, bacterium)
 	_put("Immune evasion", "%d / 10" % organism.evasion, bacterium)
-	_put("Resistance", "%d / 10" % organism.resistance, bacterium)
+	var memory_text := "none"
+	if not organism.memory.is_empty():
+		var parts: PackedStringArray = []
+		for key in organism.memory:
+			parts.append("%s ×%d" % [Sim.ANTIGENS[int(key)], int(organism.memory[key])])
+		memory_text = ", ".join(parts)
+	_put("Memory", memory_text, not bacterium)
 	_put("Attack", "%d / 10" % organism.attack, not bacterium)
 	_put("Detection", "%d / 10" % organism.detection, not bacterium)
 	_put("Move range", str(organism.move_range), true)

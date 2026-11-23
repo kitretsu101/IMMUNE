@@ -8,12 +8,10 @@ static func end_of_round(state: WorldState) -> Array:
 	state.stats.offspring_round = 0
 	_detect_and_activate(state, events)
 	_feed(state, events)
-	_antibiotic(state, events)
 	_tissue(state, events)
 	_biofilm(state)
 	_chemicals(state, events)
 	_reproduce(state, events)
-	_environment(state, events)
 	for id in state.organisms:
 		var organism: Organism = state.organisms[id]
 		organism.acted = false

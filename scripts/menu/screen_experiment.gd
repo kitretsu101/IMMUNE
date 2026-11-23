@@ -61,7 +61,6 @@ func _ready() -> void:
 	_form.add_number("bact_pop", "Initial bacteria", 1, 8)
 	_form.add_number("immune_pop", "Initial immune cells", 1, 8)
 	_form.add_number("mutation_rate", "Mutation rate", 0.0, 1.0, 0.05, "", true)
-	_form.add_number("antibiotic", "Antibiotic concentration", 0.0, 1.0, 0.05, "", true)
 	_form.add_number("nutrient_level", "Nutrients", 0.0, 1.0, 0.05, "", true)
 	_form.add_choice("difficulty", "Environmental difficulty", ["Easy", "Normal", "Hard"])
 	var right := UiKit.vbox(10)
