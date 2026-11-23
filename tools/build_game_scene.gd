@@ -76,13 +76,12 @@ func _ready() -> void:
 	starter.persistence = persistence
 	starter.human = human
 
+	var fx_holder := Node3D.new()
+	fx_holder.name = "Fx"
+	_add(scene_root, fx_holder)
 	var motes := Node3D.new()
 	motes.name = "Motes"
 	_add(scene_root, motes)
-	var nutrients := _node(MultiMeshInstance3D, "Nutrients", motes, "res://scripts/board/mote_field.gd")
-	nutrients.world = world
-	nutrients.tile_board = board
-	nutrients.source = MoteField.Source.NUTRIENTS
 	var chem_b := _node(MultiMeshInstance3D, "BacterialSignals", motes, "res://scripts/board/mote_field.gd")
 	chem_b.world = world
 	chem_b.tile_board = board
@@ -101,6 +100,10 @@ func _ready() -> void:
 	chem_i.energy = 1.0
 	chem_i.mote_size = 0.085
 	chem_i.boosted_in_view = Events.View.CHEMICAL
+	var orbs := _node(Node3D, "NutrientOrbs", scene_root, "res://scripts/board/nutrient_orbs.gd")
+	orbs.world = world
+	orbs.tile_board = board
+	orbs.fx_root = fx_holder
 	var dust := _node(CPUParticles3D, "AmbientDust", scene_root, "res://scripts/fx/ambient_dust.gd")
 
 	var core := _node(Node3D, "CoreCells", scene_root, "res://scripts/board/core_cells.gd")
@@ -109,9 +112,7 @@ func _ready() -> void:
 	core.cell_scene = load("res://scenes/human_cell_hex.tscn")
 	core.rim_shader = load("res://scenes/shaders/organism_rim.gdshader")
 
-	var fx := Node3D.new()
-	fx.name = "Fx"
-	_add(scene_root, fx)
+	var fx := fx_holder
 	var organisms := _node(Node3D, "Organisms", scene_root, "res://scripts/board/organism_layer.gd")
 	organisms.world = world
 	organisms.tile_board = board

@@ -34,6 +34,7 @@ const EVENT_MAP := {
 	"clone": ["imm_clone", "Immune", Priority.NORMAL, true, 0.1],
 	"reproduce": ["bact_reproduce", "Bacteria", Priority.NORMAL, true, 0.12],
 	"mutation": ["bact_mutation", "Bacteria", Priority.NORMAL, true, 0.2],
+	"pickup": ["bact_eat", "Bacteria", Priority.NORMAL, true, 0.1],
 	"eat": ["bact_eat", "Bacteria", Priority.LOW, true, 0.25],
 	"biofilm": ["bact_biofilm", "Bacteria", Priority.NORMAL, true, 0.2],
 	"chem_signal": ["bact_signal", "Bacteria", Priority.LOW, false, 1.0],

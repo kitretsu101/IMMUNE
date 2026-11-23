@@ -43,9 +43,17 @@ static func _move(state: WorldState, organism: Organism, action: SimAction, even
 	state.move_organism(organism, action.to)
 	if organism.team == Sim.BACTERIA:
 		organism.energy = maxf(0.0, organism.energy - 0.25 * action.path.size())
+	var pickup := 0.0
+	if organism.team == Sim.BACTERIA and state.nutrients[action.to] >= 0.4:
+		pickup = minf(1.2, state.nutrients[action.to])
+		state.nutrients[action.to] -= pickup
+		organism.energy = minf(MAX_ENERGY, organism.energy + pickup * 1.4)
 	events.append(Ev.make("move", "Movement",
 		"%s moved to %s." % [organism.label(), Ev.at(action.to)], state.round,
 		{"org": organism.id, "tile": from_tile, "tile2": action.to, "path": action.path, "team": organism.team}))
+	if pickup > 0.0:
+		events.append(Ev.make("pickup", "Environment", "%s picked up nutrients (+%.1f energy)." % [organism.label(), pickup * 1.4],
+			state.round, {"org": organism.id, "tile": action.to, "team": Sim.BACTERIA}))
 
 
 static func _attack(state: WorldState, organism: Organism, action: SimAction, events: Array) -> void:

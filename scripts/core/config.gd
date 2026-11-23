@@ -25,7 +25,7 @@ var sound_variation := true
 var ambience_when_paused := true
 # Graphics
 var glow_level := 0.8
-var vignette := 0.5
+var vignette := 0.85
 var particles := true
 var animations := true
 var fullscreen := false
@@ -45,6 +45,7 @@ const PERSISTED := ["master_volume", "sfx_volume", "ambient_volume", "music_volu
 
 func _ready() -> void:
 	load_settings()
+	vignette = maxf(vignette, 0.7)
 	_apply_window()
 
 

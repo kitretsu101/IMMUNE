@@ -32,7 +32,10 @@ static func _build() -> Theme:
 	var theme := Theme.new()
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Rajdhani", "Exo 2", "Inter", "Segoe UI", "Noto Sans", "DejaVu Sans", "Sans-serif"])
-	font.antialiasing = TextServer.FONT_ANTIALIASING_LCD
+	font.antialiasing = TextServer.FONT_ANTIALIASING_GRAY
+	font.hinting = TextServer.HINTING_LIGHT
+	font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+	font.oversampling = 0.0
 	theme.default_font = font
 	theme.default_font_size = 15
 	for type in ["Label", "RichTextLabel", "Button", "CheckBox", "CheckButton", "LineEdit", "OptionButton", "TabContainer", "SpinBox"]:

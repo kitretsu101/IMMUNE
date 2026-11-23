@@ -33,7 +33,7 @@ func _render(path: String, chords: Array, volume: float, pulse: bool) -> void:
 				_add_tone(buffer, start, _hz(note - 12) * (1.0 + detune), bar + 1.2, 0.045, 1.4, 1.6, 0.0)
 		# Bell arpeggio.
 		for step in 8:
-			var note: int = notes[(step * 3 + (1 if pulse else 0)) % 3] + 12 + (12 if step % 4 == 3 else 0)
+			var note: int = notes[(step * 3 + (1 if pulse else 0)) % 3] + (12 if step % 4 == 3 else 0)
 			var at := start + int(step * bar / 8.0 * RATE)
 			_add_tone(buffer, at, _hz(note), 1.6, 0.05, 0.01, 1.4, 3.0)
 		if pulse:

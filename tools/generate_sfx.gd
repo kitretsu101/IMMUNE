@@ -94,6 +94,11 @@ func catalog() -> Array:
 
 # --- Synthesis primitives -----------------------------------------------------------------------
 
+## Pulls everything above ~500 Hz down so nothing is shrill.
+func _soften(freq: float) -> float:
+	return freq if freq < 500.0 else minf(500.0 + (freq - 500.0) * 0.4, 820.0)
+
+
 func _wave(kind: String, phase: float) -> float:
 	var p := fposmod(phase, 1.0)
 	match kind:
@@ -105,6 +110,7 @@ func _wave(kind: String, phase: float) -> float:
 
 func _tone(freq: float, dur: float, kind := "sine", vol := 0.4, attack := 0.005, release := 0.05,
 		sweep := 1.0, vib_hz := 0.0, vib_depth := 0.0) -> PackedFloat32Array:
+	freq = _soften(freq)
 	var count := int(dur * RATE)
 	var out := PackedFloat32Array()
 	out.resize(count)
@@ -128,7 +134,7 @@ func _noise(dur: float, vol := 0.3, smooth := 0.5, attack := 0.003, release := 0
 	var last := 0.0
 	for i in count:
 		var t := float(i) / RATE
-		last = lerpf(last, rng.randf_range(-1.0, 1.0), clampf(smooth, 0.01, 1.0))
+		last = lerpf(last, rng.randf_range(-1.0, 1.0), clampf(smooth * 0.5, 0.01, 1.0))
 		out[i] = last * vol * minf(1.0, t / maxf(attack, 0.0001)) * minf(1.0, (dur - t) / maxf(release, 0.0001))
 	return out
 

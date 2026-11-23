@@ -37,8 +37,12 @@ static func build(setup: GameSetup, adjacency: Array, positions: PackedVector3Ar
 	state.core.append_array(state.neighbors[center])
 	for tile in state.count:
 		if state.active[tile] == 1:
-			var noise := state.rng.randf()
-			state.nutrients[tile] = clampf(setup.nutrient_level * 1.4 * noise + setup.nutrient_level * 0.4, 0.0, Balance.NUTRIENT_CAP)
+			state.nutrients[tile] = setup.nutrient_level * 0.12 * state.rng.randf()
+	var spots := 3 + int(setup.nutrient_level * 8.0)
+	for index in spots:
+		var spot := state.rng.randi_range(0, state.count - 1)
+		if state.active[spot] == 1:
+			state.nutrients[spot] = state.rng.randf_range(1.2, Balance.NUTRIENT_CAP)
 	_place_immune(state, setup)
 	_place_bacteria(state, setup)
 	return state

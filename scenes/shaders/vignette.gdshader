@@ -8,7 +8,8 @@ void fragment() {
 	vec2 p = UV - 0.5;
 	p.x *= 1.1;
 	float d = length(p);
-	float v = smoothstep(0.32, 0.85, d);
+	float v = smoothstep(0.14, 0.68, d);
+	v = pow(v, 0.8);
 	float scan = 0.012 * sin(UV.y * 900.0 + TIME * 0.5);
-	COLOR = vec4(tint, v * strength + scan * v);
+	COLOR = vec4(tint, clamp(v * strength * 1.35 + scan * v, 0.0, 0.96));
 }

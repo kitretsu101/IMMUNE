@@ -80,7 +80,11 @@ static func _feed(state: WorldState, events: Array) -> void:
 					{"org": bacterium.id, "tile": tile, "team": Sim.BACTERIA, "victim_team": Sim.BACTERIA, "sev": Ev.NOTABLE}))
 	for tile in state.count:
 		if state.active[tile] == 1 and state.tissue[tile] != Sim.Tissue.DESTROYED:
-			state.nutrients[tile] = minf(Balance.NUTRIENT_CAP, state.nutrients[tile] + 0.05 * (0.4 + state.setup.nutrient_level))
+			state.nutrients[tile] = minf(Balance.NUTRIENT_CAP, state.nutrients[tile] + 0.01 * state.setup.nutrient_level)
+	if state.rng.randf() < 0.35 + state.setup.nutrient_level * 0.5:
+		var spot := state.rng.randi_range(0, state.count - 1)
+		if state.active[spot] == 1 and state.tissue[spot] != Sim.Tissue.DESTROYED:
+			state.nutrients[spot] = state.rng.randf_range(1.2, Balance.NUTRIENT_CAP)
 
 
 static func _antibiotic(state: WorldState, events: Array) -> void:

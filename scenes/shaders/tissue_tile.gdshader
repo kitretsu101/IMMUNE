@@ -111,7 +111,7 @@ void fragment() {
 	// MEDIUM: nutrients as electric yellow specks.
 	vec2 sp = p * 7.0 + vec2(TIME * 0.12, -TIME * 0.09);
 	float speck = step(0.962, hash21(floor(sp) + seed * 31.0)) * (0.55 + 0.45 * sin(TIME * 3.0 + hash21(floor(sp)) * 20.0));
-	emit += vec3(1.0, 0.86, 0.18) * nutrient * (speck * 1.0 + 0.03) * is_top;
+	emit += vec3(1.0, 0.86, 0.18) * nutrient * (speck * 0.0 + 0.05) * is_top;
 	// MEDIUM: chemical signals as drifting purple haze.
 	float haze = 0.5 + 0.5 * sin(p.x * 4.0 + TIME * 0.8 + sin(p.y * 3.0 + TIME * 0.6) * 1.5);
 	emit += vec3(0.65, 0.35, 1.0) * chem * (0.12 + 0.55 * haze * v.x) * is_top;

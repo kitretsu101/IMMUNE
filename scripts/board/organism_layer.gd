@@ -108,6 +108,7 @@ func _caption(event: Dictionary) -> void:
 		return
 	var at := tile_board.positions[tile]
 	match event.type:
+		"pickup", "eat": FxBurst.float_text(fx_root, at, "+NUTRIENTS", Neon.YELLOW, 36)
 		"infect_ok": FxBurst.float_text(fx_root, at, "INFECTED!", Neon.RED)
 		"infect_fail": FxBurst.float_text(fx_root, at, "resisted", Neon.TEXT_MUTED, 34)
 		"mutation": FxBurst.float_text(fx_root, tile_board.positions[event.tile], "MUTATION: %s" % str(event.get("trait", "")).to_upper(), Neon.PURPLE)
@@ -198,6 +199,8 @@ func _on_event(event: Dictionary) -> void:
 		"antigen_detected", "memory":
 			if views.has(event.org):
 				FxBurst.ring(fx_root, views[event.org].position, Neon.CYAN, 1.8, 0.8, 1.2)
+		"pickup", "eat":
+			FxBurst.burst(fx_root, tile_board.positions[event.tile] + Vector3.UP * 0.3, Neon.YELLOW, 10, 1.2, 0.6, 0.08)
 		"tissue_cleansed":
 			FxBurst.burst(fx_root, tile_board.positions[event.tile] + Vector3.UP * 0.2, Neon.CYAN, 14, 1.4, 0.7, 0.08)
 		"tissue_destroyed":
