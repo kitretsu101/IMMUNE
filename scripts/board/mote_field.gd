@@ -1,8 +1,8 @@
 class_name MoteField
 extends MultiMeshInstance3D
-## Floating specks above tiles: nutrients (yellow) or chemical signals (purple / cyan). Medium glow tier.
+## Floating specks above tiles: nutrients (yellow). Medium glow tier.
 
-enum Source { NUTRIENTS, CHEM_BACTERIA, CHEM_IMMUNE }
+enum Source { NUTRIENTS }
 
 @export var world: WorldHost
 @export var tile_board: TileBoard
@@ -67,10 +67,6 @@ func _process(delta: float) -> void:
 			match source:
 				Source.NUTRIENTS:
 					amount = state.nutrients[tile] / 1.5
-				Source.CHEM_BACTERIA:
-					amount = state.chem_bact[tile] / 1.4
-				Source.CHEM_IMMUNE:
-					amount = state.chem_immune[tile] / 1.4
 		amount = clampf(amount, 0.0, 1.0) * boost
 		for slot in per_tile:
 			var index := tile * per_tile + slot

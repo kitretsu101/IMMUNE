@@ -212,7 +212,7 @@ static func _score_bacterium(state: WorldState, organism: Organism, action: SimA
 	match action.kind:
 		Sim.Kind.MOVE:
 			var tile := action.to
-			var s := growth * (state.nutrients[tile] / 2.0 + 0.06 * state.chem_bact[tile])
+			var s := growth * (state.nutrients[tile] / 2.0)
 			s += infection * 0.3 * (context.open_core_now - context.open_core[tile]) / 2.0
 			s -= (0.15 + 0.3 * survival) * danger[tile]
 			s += survival * 0.2 * state.biofilm[tile]

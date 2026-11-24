@@ -53,7 +53,7 @@ func _ready() -> void:
 		["Infected tissue", "Red tiles are **infected**. They feed the colony and can spread. Left alone for 8 rounds they are **destroyed**. A T cell **standing on infected tissue cleanses it** (CLEANSED), leaving damaged tissue that heals in 3 rounds.", {"tile": "infected"}, Neon.RED, "tile"],
 		["Top bar", "**Round**, elapsed time, mode, status, whose turn it is and your **actions left** this turn, and the simulation speed.", {"ui": "top"}, cyan, ""],
 		["Population panel", "Living and dead bacteria, offspring this round, **dominant strain**, and your cells: **active**, dead and **eliminations**, with a population chart.", {"ui": "left"}, cyan, ""],
-		["Environment panel", "Healthy / infected / damaged / destroyed tissue and the nutrient level. **Board view** buttons recolour the board (Infection, Nutrients, Chemical, Immune, Evolution).", {"ui": "right"}, cyan, ""],
+		["Environment panel", "Healthy / infected / damaged / destroyed tissue and the nutrient level. **Board view** buttons recolour the board (Infection, Nutrients, Immune, Evolution).", {"ui": "right"}, cyan, ""],
 		["Inspector", "Click any cell to see its health, energy, traits, generation, mutations, current action and the AI's last decision.", {"ui": "organism"}, cyan, ""],
 		["Your actions", "**Move/Attack [M]** (cyan tiles move, orange attack), **Clone [C]**, **Wait [W]**, **End turn [Space]**. Each cell acts once per turn.", {"ui": "actions"}, cyan, ""],
 		["Event log and captions", "Captions on the board and this log tell you what happened: **INFECTED!**, **MUTATION**, **SPLIT**, damage numbers, **MISS**, **CLEANSED**, **+NUTRIENTS**.", {"ui": "log"}, cyan, ""],

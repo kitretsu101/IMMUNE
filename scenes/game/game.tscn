@@ -1,208 +1,183 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/fx/environment_fx.gd" id="1_sikks"]
-[ext_resource type="Script" path="res://scripts/board/camera_controller.gd" id="2_ah1mj"]
-[ext_resource type="Script" path="res://scripts/board/tile_board.gd" id="3_t5owt"]
-[ext_resource type="PackedScene" path="res://scenes/hex_tile.tscn" id="4_41gcl"]
-[ext_resource type="Script" path="res://scripts/flow/world_host.gd" id="5_fba2n"]
-[ext_resource type="Script" path="res://scripts/board/animation_gate.gd" id="6_teoly"]
-[ext_resource type="Script" path="res://scripts/flow/sim_clock.gd" id="7_b7fhm"]
-[ext_resource type="Script" path="res://scripts/flow/ai_agent.gd" id="8_i600x"]
-[ext_resource type="Script" path="res://scripts/flow/round_manager.gd" id="9_35t1a"]
-[ext_resource type="Script" path="res://scripts/flow/save_persistence.gd" id="10_ye7x0"]
-[ext_resource type="Script" path="res://scripts/flow/human_controller.gd" id="11_oepbe"]
-[ext_resource type="Script" path="res://scripts/flow/match_starter.gd" id="12_3322e"]
-[ext_resource type="Script" path="res://scripts/board/tile_painter.gd" id="13_mge0u"]
-[ext_resource type="Script" path="res://scripts/board/mote_field.gd" id="14_uw24m"]
-[ext_resource type="Script" path="res://scripts/board/nutrient_orbs.gd" id="15_kuo75"]
-[ext_resource type="Script" path="res://scripts/fx/ambient_dust.gd" id="16_jiu3o"]
-[ext_resource type="Script" path="res://scripts/board/core_cells.gd" id="17_vbi6r"]
-[ext_resource type="PackedScene" path="res://scenes/human_cell_hex.tscn" id="18_twah4"]
-[ext_resource type="Shader" path="res://scenes/shaders/organism_rim.gdshader" id="19_qn4tv"]
-[ext_resource type="Script" path="res://scripts/board/organism_layer.gd" id="20_e3lpd"]
-[ext_resource type="PackedScene" path="res://assets/t_cell/t_cell.gltf" id="21_au6n5"]
-[ext_resource type="PackedScene" path="res://assets/bacteria/bacterium_game.gltf" id="22_tcm0m"]
-[ext_resource type="Shader" path="res://scenes/shaders/ring.gdshader" id="23_yy23q"]
-[ext_resource type="Shader" path="res://scenes/shaders/health_bar.gdshader" id="24_0bk81"]
-[ext_resource type="Shader" path="res://scenes/bacterium_swim.gdshader" id="25_q8d8h"]
-[ext_resource type="Script" path="res://scripts/fx/spatial_audio_bridge.gd" id="26_6o42e"]
-[ext_resource type="Script" path="res://scripts/fx/screen_vignette.gd" id="27_rnb85"]
-[ext_resource type="Script" path="res://scripts/hud/hud_layout.gd" id="28_7dxef"]
-[ext_resource type="Script" path="res://scripts/hud/hud_top_bar.gd" id="29_1s0gc"]
-[ext_resource type="Script" path="res://scripts/hud/hud_population_panel.gd" id="30_84b8o"]
-[ext_resource type="Script" path="res://scripts/hud/hud_environment_panel.gd" id="31_g2bdr"]
-[ext_resource type="Script" path="res://scripts/hud/hud_event_log.gd" id="32_864w3"]
-[ext_resource type="Script" path="res://scripts/hud/hud_organism_panel.gd" id="33_5dkr6"]
-[ext_resource type="Script" path="res://scripts/hud/hud_toolbar.gd" id="34_bjk8q"]
-[ext_resource type="Script" path="res://scripts/hud/hud_action_bar.gd" id="35_bf22m"]
-[ext_resource type="Script" path="res://scripts/hud/hud_tutorial.gd" id="36_tcv87"]
-[ext_resource type="Script" path="res://scripts/hud/hud_banner.gd" id="37_3f8qr"]
-[ext_resource type="Script" path="res://scripts/hud/hud_toasts.gd" id="38_gsju6"]
-[ext_resource type="Script" path="res://scripts/hud/hud_result_overlay.gd" id="39_yegcf"]
-[ext_resource type="Script" path="res://scripts/log/log_window.gd" id="40_0lksv"]
+[ext_resource type="Script" path="res://scripts/fx/environment_fx.gd" id="1_5q2xh"]
+[ext_resource type="Script" path="res://scripts/board/camera_controller.gd" id="2_sikks"]
+[ext_resource type="Script" path="res://scripts/board/tile_board.gd" id="3_ah1mj"]
+[ext_resource type="PackedScene" path="res://scenes/hex_tile.tscn" id="4_t5owt"]
+[ext_resource type="Script" path="res://scripts/flow/world_host.gd" id="5_41gcl"]
+[ext_resource type="Script" path="res://scripts/board/animation_gate.gd" id="6_fba2n"]
+[ext_resource type="Script" path="res://scripts/flow/sim_clock.gd" id="7_teoly"]
+[ext_resource type="Script" path="res://scripts/flow/ai_agent.gd" id="8_b7fhm"]
+[ext_resource type="Script" path="res://scripts/flow/round_manager.gd" id="9_i600x"]
+[ext_resource type="Script" path="res://scripts/flow/save_persistence.gd" id="10_35t1a"]
+[ext_resource type="Script" path="res://scripts/flow/human_controller.gd" id="11_ye7x0"]
+[ext_resource type="Script" path="res://scripts/flow/match_starter.gd" id="12_oepbe"]
+[ext_resource type="Script" path="res://scripts/board/tile_painter.gd" id="13_3322e"]
+[ext_resource type="Script" path="res://scripts/board/nutrient_orbs.gd" id="14_mge0u"]
+[ext_resource type="Script" path="res://scripts/fx/ambient_dust.gd" id="15_uw24m"]
+[ext_resource type="Script" path="res://scripts/board/core_cells.gd" id="16_kuo75"]
+[ext_resource type="PackedScene" path="res://scenes/human_cell_hex.tscn" id="17_jiu3o"]
+[ext_resource type="Shader" path="res://scenes/shaders/organism_rim.gdshader" id="18_vbi6r"]
+[ext_resource type="Script" path="res://scripts/board/organism_layer.gd" id="19_twah4"]
+[ext_resource type="PackedScene" path="res://assets/t_cell/t_cell.gltf" id="20_qn4tv"]
+[ext_resource type="PackedScene" path="res://assets/bacteria/bacterium_game.gltf" id="21_e3lpd"]
+[ext_resource type="Shader" path="res://scenes/shaders/ring.gdshader" id="22_au6n5"]
+[ext_resource type="Shader" path="res://scenes/shaders/health_bar.gdshader" id="23_tcm0m"]
+[ext_resource type="Shader" path="res://scenes/bacterium_swim.gdshader" id="24_yy23q"]
+[ext_resource type="Script" path="res://scripts/fx/spatial_audio_bridge.gd" id="25_0bk81"]
+[ext_resource type="Script" path="res://scripts/fx/screen_vignette.gd" id="26_q8d8h"]
+[ext_resource type="Script" path="res://scripts/hud/hud_layout.gd" id="27_6o42e"]
+[ext_resource type="Script" path="res://scripts/hud/hud_top_bar.gd" id="28_rnb85"]
+[ext_resource type="Script" path="res://scripts/hud/hud_population_panel.gd" id="29_7dxef"]
+[ext_resource type="Script" path="res://scripts/hud/hud_environment_panel.gd" id="30_1s0gc"]
+[ext_resource type="Script" path="res://scripts/hud/hud_event_log.gd" id="31_84b8o"]
+[ext_resource type="Script" path="res://scripts/hud/hud_organism_panel.gd" id="32_g2bdr"]
+[ext_resource type="Script" path="res://scripts/hud/hud_toolbar.gd" id="33_864w3"]
+[ext_resource type="Script" path="res://scripts/hud/hud_action_bar.gd" id="34_5dkr6"]
+[ext_resource type="Script" path="res://scripts/hud/hud_tutorial.gd" id="35_bjk8q"]
+[ext_resource type="Script" path="res://scripts/hud/hud_banner.gd" id="36_bf22m"]
+[ext_resource type="Script" path="res://scripts/hud/hud_toasts.gd" id="37_tcv87"]
+[ext_resource type="Script" path="res://scripts/hud/hud_result_overlay.gd" id="38_3f8qr"]
+[ext_resource type="Script" path="res://scripts/log/log_window.gd" id="39_gsju6"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hqxe5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yegcf"]
 albedo_color = Color(0.006, 0.01, 0.03, 1)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_472nx"]
-material = SubResource("StandardMaterial3D_hqxe5")
+[sub_resource type="PlaneMesh" id="PlaneMesh_0lksv"]
+material = SubResource("StandardMaterial3D_yegcf")
 size = Vector2(160, 160)
 
-[node name="Game" type="Node3D" unique_id=879736537]
+[node name="Game" type="Node3D" unique_id=1178464229]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=85110764]
-script = ExtResource("1_sikks")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=958969807]
+script = ExtResource("1_5q2xh")
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1069446704]
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1187614342]
 transform = Transform3D(0.85749286, -0.4157754, 0.30304578, 0, 0.58901507, 0.80812204, -0.5144958, -0.6929589, 0.5050762, 0, 0, 0)
 light_color = Color(0.7, 0.85, 1, 1)
 light_energy = 0.9
 
-[node name="Floor" type="MeshInstance3D" parent="." unique_id=1764500110]
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=929207093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01, 0)
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_472nx")
+mesh = SubResource("PlaneMesh_0lksv")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=339110761 node_paths=PackedStringArray("tile_board")]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=537641062 node_paths=PackedStringArray("tile_board")]
 transform = Transform3D(0.9320047, -0.2823721, 0.22722961, 0, 0.62693334, 0.779073, -0.36244625, -0.72609967, 0.58430475, 7, 24, 18)
 projection = 1
 current = true
 size = 30.5
 far = 200.0
-script = ExtResource("2_ah1mj")
+script = ExtResource("2_sikks")
 tile_board = NodePath("../Board")
 
-[node name="Board" type="Node3D" parent="." unique_id=1216848940 node_paths=PackedStringArray("camera")]
-script = ExtResource("3_t5owt")
-tile_scene = ExtResource("4_41gcl")
+[node name="Board" type="Node3D" parent="." unique_id=1904974929 node_paths=PackedStringArray("camera")]
+script = ExtResource("3_ah1mj")
+tile_scene = ExtResource("4_t5owt")
 camera = NodePath("../Camera3D")
 
-[node name="Simulation" type="Node" parent="." unique_id=2004405606]
+[node name="Simulation" type="Node" parent="." unique_id=386261634]
 
-[node name="World" type="Node" parent="Simulation" unique_id=669959433 node_paths=PackedStringArray("tile_board")]
-script = ExtResource("5_fba2n")
+[node name="World" type="Node" parent="Simulation" unique_id=1817364632 node_paths=PackedStringArray("tile_board")]
+script = ExtResource("5_41gcl")
 tile_board = NodePath("../../Board")
 
-[node name="AnimationGate" type="Node" parent="Simulation" unique_id=1564721088]
-script = ExtResource("6_teoly")
+[node name="AnimationGate" type="Node" parent="Simulation" unique_id=1378833559]
+script = ExtResource("6_fba2n")
 
-[node name="Clock" type="Node" parent="Simulation" unique_id=906461063 node_paths=PackedStringArray("world")]
-script = ExtResource("7_b7fhm")
+[node name="Clock" type="Node" parent="Simulation" unique_id=50220161 node_paths=PackedStringArray("world")]
+script = ExtResource("7_teoly")
 world = NodePath("../World")
 speeds = PackedFloat32Array(0.25, 0.5, 1, 2, 4, 8, 16)
 
-[node name="ImmuneAI" type="Node" parent="Simulation" unique_id=1010511366]
-script = ExtResource("8_i600x")
+[node name="ImmuneAI" type="Node" parent="Simulation" unique_id=1577223993]
+script = ExtResource("8_b7fhm")
 team = 1
 
-[node name="BacteriaAI" type="Node" parent="Simulation" unique_id=921386773]
-script = ExtResource("8_i600x")
+[node name="BacteriaAI" type="Node" parent="Simulation" unique_id=1534908249]
+script = ExtResource("8_b7fhm")
 
-[node name="Rounds" type="Node" parent="Simulation" unique_id=1363904897 node_paths=PackedStringArray("world", "clock", "gate", "immune_ai", "bacteria_ai")]
-script = ExtResource("9_35t1a")
+[node name="Rounds" type="Node" parent="Simulation" unique_id=1432041449 node_paths=PackedStringArray("world", "clock", "gate", "immune_ai", "bacteria_ai")]
+script = ExtResource("9_i600x")
 world = NodePath("../World")
 clock = NodePath("../Clock")
 gate = NodePath("../AnimationGate")
 immune_ai = NodePath("../ImmuneAI")
 bacteria_ai = NodePath("../BacteriaAI")
 
-[node name="Persistence" type="Node" parent="Simulation" unique_id=1123445463 node_paths=PackedStringArray("world", "rounds")]
-script = ExtResource("10_ye7x0")
+[node name="Persistence" type="Node" parent="Simulation" unique_id=1066574322 node_paths=PackedStringArray("world", "rounds")]
+script = ExtResource("10_35t1a")
 world = NodePath("../World")
 rounds = NodePath("../Rounds")
 
-[node name="Human" type="Node" parent="Simulation" unique_id=1334317257 node_paths=PackedStringArray("world", "tile_board", "painter", "rounds", "clock")]
-script = ExtResource("11_oepbe")
+[node name="Human" type="Node" parent="Simulation" unique_id=1659515414 node_paths=PackedStringArray("world", "tile_board", "painter", "rounds", "clock")]
+script = ExtResource("11_ye7x0")
 world = NodePath("../World")
 tile_board = NodePath("../../Board")
 painter = NodePath("../../TilePainter")
 rounds = NodePath("../Rounds")
 clock = NodePath("../Clock")
 
-[node name="MatchStarter" type="Node" parent="Simulation" unique_id=1485063473 node_paths=PackedStringArray("rounds", "persistence", "human")]
-script = ExtResource("12_3322e")
+[node name="MatchStarter" type="Node" parent="Simulation" unique_id=1359119548 node_paths=PackedStringArray("rounds", "persistence", "human")]
+script = ExtResource("12_oepbe")
 rounds = NodePath("../Rounds")
 persistence = NodePath("../Persistence")
 human = NodePath("../Human")
 
-[node name="TilePainter" type="Node" parent="." unique_id=2016663977 node_paths=PackedStringArray("world", "tile_board")]
-script = ExtResource("13_mge0u")
+[node name="TilePainter" type="Node" parent="." unique_id=1788786832 node_paths=PackedStringArray("world", "tile_board")]
+script = ExtResource("13_3322e")
 world = NodePath("../Simulation/World")
 tile_board = NodePath("../Board")
 
-[node name="Fx" type="Node3D" parent="." unique_id=1589954571]
+[node name="Fx" type="Node3D" parent="." unique_id=425043503]
 
-[node name="Motes" type="Node3D" parent="." unique_id=60612434]
-
-[node name="BacterialSignals" type="MultiMeshInstance3D" parent="Motes" unique_id=441974049 node_paths=PackedStringArray("world", "tile_board")]
-script = ExtResource("14_uw24m")
-world = NodePath("../../Simulation/World")
-tile_board = NodePath("../../Board")
-source = 1
-per_tile = 3
-color = Color(0.7, 0.4, 1, 1)
-energy = 1.0
-mote_size = 0.09
-boosted_in_view = 3
-
-[node name="ImmuneSignals" type="MultiMeshInstance3D" parent="Motes" unique_id=1683718318 node_paths=PackedStringArray("world", "tile_board")]
-script = ExtResource("14_uw24m")
-world = NodePath("../../Simulation/World")
-tile_board = NodePath("../../Board")
-source = 2
-per_tile = 3
-color = Color(0.3, 0.9, 1, 1)
-energy = 1.0
-mote_size = 0.085
-boosted_in_view = 3
-
-[node name="NutrientOrbs" type="Node3D" parent="." unique_id=987320367 node_paths=PackedStringArray("world", "tile_board", "fx_root")]
-script = ExtResource("15_kuo75")
+[node name="NutrientOrbs" type="Node3D" parent="." unique_id=40619354 node_paths=PackedStringArray("world", "tile_board", "fx_root")]
+script = ExtResource("14_mge0u")
 world = NodePath("../Simulation/World")
 tile_board = NodePath("../Board")
 fx_root = NodePath("../Fx")
 
-[node name="AmbientDust" type="CPUParticles3D" parent="." unique_id=898568894]
-script = ExtResource("16_jiu3o")
+[node name="AmbientDust" type="CPUParticles3D" parent="." unique_id=1398586740]
+script = ExtResource("15_uw24m")
 
-[node name="CoreCells" type="Node3D" parent="." unique_id=673590545 node_paths=PackedStringArray("world", "tile_board")]
-script = ExtResource("17_vbi6r")
+[node name="CoreCells" type="Node3D" parent="." unique_id=351760885 node_paths=PackedStringArray("world", "tile_board")]
+script = ExtResource("16_kuo75")
 world = NodePath("../Simulation/World")
 tile_board = NodePath("../Board")
-cell_scene = ExtResource("18_twah4")
-rim_shader = ExtResource("19_qn4tv")
+cell_scene = ExtResource("17_jiu3o")
+rim_shader = ExtResource("18_vbi6r")
 
-[node name="Organisms" type="Node3D" parent="." unique_id=777362317 node_paths=PackedStringArray("world", "tile_board", "gate", "fx_root")]
-script = ExtResource("20_e3lpd")
+[node name="Organisms" type="Node3D" parent="." unique_id=198955592 node_paths=PackedStringArray("world", "tile_board", "gate", "fx_root")]
+script = ExtResource("19_twah4")
 world = NodePath("../Simulation/World")
 tile_board = NodePath("../Board")
 gate = NodePath("../Simulation/AnimationGate")
 fx_root = NodePath("../Fx")
-t_cell_model = ExtResource("21_au6n5")
-bacteria_model = ExtResource("22_tcm0m")
-rim_shader = ExtResource("19_qn4tv")
-ring_shader = ExtResource("23_yy23q")
-bar_shader = ExtResource("24_0bk81")
-swim_shader = ExtResource("25_q8d8h")
+t_cell_model = ExtResource("20_qn4tv")
+bacteria_model = ExtResource("21_e3lpd")
+rim_shader = ExtResource("18_vbi6r")
+ring_shader = ExtResource("22_au6n5")
+bar_shader = ExtResource("23_tcm0m")
+swim_shader = ExtResource("24_yy23q")
 
-[node name="AudioBridge" type="Node" parent="." unique_id=53630816 node_paths=PackedStringArray("tile_board", "camera")]
-script = ExtResource("26_6o42e")
+[node name="AudioBridge" type="Node" parent="." unique_id=816586757 node_paths=PackedStringArray("tile_board", "camera")]
+script = ExtResource("25_0bk81")
 tile_board = NodePath("../Board")
 camera = NodePath("../Camera3D")
 
-[node name="Vignette" type="CanvasLayer" parent="." unique_id=1892583994]
-script = ExtResource("27_rnb85")
+[node name="Vignette" type="CanvasLayer" parent="." unique_id=451463894]
+script = ExtResource("26_q8d8h")
 
-[node name="Hud" type="CanvasLayer" parent="." unique_id=1454375536]
+[node name="Hud" type="CanvasLayer" parent="." unique_id=946338202]
 layer = 10
 
-[node name="Root" type="Control" parent="Hud" unique_id=15081264 node_paths=PackedStringArray("camera", "top_bar", "left_panel", "right_panel", "bottom_dock", "action_panel")]
+[node name="Root" type="Control" parent="Hud" unique_id=539853196 node_paths=PackedStringArray("camera", "top_bar", "left_panel", "right_panel", "bottom_dock", "action_panel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource("28_7dxef")
+script = ExtResource("27_6o42e")
 camera = NodePath("../../Camera3D")
 top_bar = NodePath("Frame/Layout/TopBar")
 left_panel = NodePath("Frame/Layout/Middle/Population")
@@ -210,7 +185,7 @@ right_panel = NodePath("Frame/Layout/Middle/Environment")
 bottom_dock = NodePath("Frame/Layout/Dock")
 action_panel = NodePath("Actions")
 
-[node name="Frame" type="MarginContainer" parent="Hud/Root" unique_id=1566560208]
+[node name="Frame" type="MarginContainer" parent="Hud/Root" unique_id=1583170747]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -220,82 +195,82 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Layout" type="VBoxContainer" parent="Hud/Root/Frame" unique_id=523811303]
+[node name="Layout" type="VBoxContainer" parent="Hud/Root/Frame" unique_id=2109426498]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="TopBar" type="PanelContainer" parent="Hud/Root/Frame/Layout" unique_id=2129374727 node_paths=PackedStringArray("world", "rounds", "clock")]
+[node name="TopBar" type="PanelContainer" parent="Hud/Root/Frame/Layout" unique_id=1520925793 node_paths=PackedStringArray("world", "rounds", "clock")]
 layout_mode = 2
-script = ExtResource("29_1s0gc")
+script = ExtResource("28_rnb85")
 world = NodePath("../../../../../Simulation/World")
 rounds = NodePath("../../../../../Simulation/Rounds")
 clock = NodePath("../../../../../Simulation/Clock")
 
-[node name="Middle" type="HBoxContainer" parent="Hud/Root/Frame/Layout" unique_id=1288809279]
+[node name="Middle" type="HBoxContainer" parent="Hud/Root/Frame/Layout" unique_id=471058825]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Population" type="PanelContainer" parent="Hud/Root/Frame/Layout/Middle" unique_id=654886768 node_paths=PackedStringArray("world")]
+[node name="Population" type="PanelContainer" parent="Hud/Root/Frame/Layout/Middle" unique_id=48746396 node_paths=PackedStringArray("world")]
 layout_mode = 2
 size_flags_vertical = 0
-script = ExtResource("30_84b8o")
+script = ExtResource("29_7dxef")
 world = NodePath("../../../../../../Simulation/World")
 
-[node name="BoardGap" type="Control" parent="Hud/Root/Frame/Layout/Middle" unique_id=1672867310]
+[node name="BoardGap" type="Control" parent="Hud/Root/Frame/Layout/Middle" unique_id=1142090511]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="Environment" type="PanelContainer" parent="Hud/Root/Frame/Layout/Middle" unique_id=1315093076 node_paths=PackedStringArray("world")]
+[node name="Environment" type="PanelContainer" parent="Hud/Root/Frame/Layout/Middle" unique_id=1118631129 node_paths=PackedStringArray("world")]
 layout_mode = 2
 size_flags_vertical = 0
-script = ExtResource("31_g2bdr")
+script = ExtResource("30_1s0gc")
 world = NodePath("../../../../../../Simulation/World")
 
-[node name="Dock" type="VBoxContainer" parent="Hud/Root/Frame/Layout" unique_id=1136892111]
+[node name="Dock" type="VBoxContainer" parent="Hud/Root/Frame/Layout" unique_id=1838925873]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="InfoRow" type="HBoxContainer" parent="Hud/Root/Frame/Layout/Dock" unique_id=1407143538]
+[node name="InfoRow" type="HBoxContainer" parent="Hud/Root/Frame/Layout/Dock" unique_id=1225680499]
 layout_mode = 2
 size_flags_vertical = 8
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="EventLog" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock/InfoRow" unique_id=1926694320]
+[node name="EventLog" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock/InfoRow" unique_id=609148157]
 layout_mode = 2
 size_flags_vertical = 8
-script = ExtResource("32_864w3")
+script = ExtResource("31_84b8o")
 
-[node name="SelectedOrganism" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock/InfoRow" unique_id=136002722 node_paths=PackedStringArray("world")]
+[node name="SelectedOrganism" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock/InfoRow" unique_id=1127252474 node_paths=PackedStringArray("world")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
-script = ExtResource("33_5dkr6")
+script = ExtResource("32_g2bdr")
 world = NodePath("../../../../../../../Simulation/World")
 
-[node name="Toolbar" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock" unique_id=1103525444 node_paths=PackedStringArray("world", "rounds", "clock", "camera", "persistence")]
+[node name="Toolbar" type="PanelContainer" parent="Hud/Root/Frame/Layout/Dock" unique_id=2136507892 node_paths=PackedStringArray("world", "rounds", "clock", "camera", "persistence")]
 layout_mode = 2
-script = ExtResource("34_bjk8q")
+script = ExtResource("33_864w3")
 world = NodePath("../../../../../../Simulation/World")
 rounds = NodePath("../../../../../../Simulation/Rounds")
 clock = NodePath("../../../../../../Simulation/Clock")
 camera = NodePath("../../../../../../Camera3D")
 persistence = NodePath("../../../../../../Simulation/Persistence")
 
-[node name="Actions" type="PanelContainer" parent="Hud/Root" unique_id=1528483765 node_paths=PackedStringArray("world", "rounds", "human")]
+[node name="Actions" type="PanelContainer" parent="Hud/Root" unique_id=1227679155 node_paths=PackedStringArray("world", "rounds", "human")]
 layout_mode = 0
-script = ExtResource("35_bf22m")
+script = ExtResource("34_5dkr6")
 world = NodePath("../../../Simulation/World")
 rounds = NodePath("../../../Simulation/Rounds")
 human = NodePath("../../../Simulation/Human")
 
-[node name="Tutorial" type="Control" parent="Hud/Root" unique_id=603043698 node_paths=PackedStringArray("world", "camera", "top_bar", "left_panel", "right_panel", "organism_panel", "action_bar", "event_log", "toolbar")]
+[node name="Tutorial" type="Control" parent="Hud/Root" unique_id=1708482918 node_paths=PackedStringArray("world", "camera", "top_bar", "left_panel", "right_panel", "organism_panel", "action_bar", "event_log", "toolbar")]
 anchors_preset = 0
-script = ExtResource("36_tcv87")
+script = ExtResource("35_bjk8q")
 world = NodePath("../../../Simulation/World")
 camera = NodePath("../../../Camera3D")
 top_bar = NodePath("../Frame/Layout/TopBar")
@@ -306,12 +281,12 @@ action_bar = NodePath("../Actions")
 event_log = NodePath("../Frame/Layout/Dock/InfoRow/EventLog")
 toolbar = NodePath("../Frame/Layout/Dock/Toolbar")
 
-[node name="Banner" type="Control" parent="Hud/Root" unique_id=1434059103 node_paths=PackedStringArray("rounds")]
+[node name="Banner" type="Control" parent="Hud/Root" unique_id=105116969 node_paths=PackedStringArray("rounds")]
 anchors_preset = 0
-script = ExtResource("37_3f8qr")
+script = ExtResource("36_bf22m")
 rounds = NodePath("../../../Simulation/Rounds")
 
-[node name="Toasts" type="VBoxContainer" parent="Hud/Root" unique_id=762974204]
+[node name="Toasts" type="VBoxContainer" parent="Hud/Root" unique_id=1251581588]
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -319,13 +294,13 @@ offset_left = -170.0
 offset_top = 230.0
 offset_right = 170.0
 offset_bottom = 240.0
-script = ExtResource("38_gsju6")
+script = ExtResource("37_tcv87")
 
-[node name="Result" type="Control" parent="Hud/Root" unique_id=1950611023 node_paths=PackedStringArray("world", "rounds")]
+[node name="Result" type="Control" parent="Hud/Root" unique_id=1027943336 node_paths=PackedStringArray("world", "rounds")]
 anchors_preset = 0
-script = ExtResource("39_yegcf")
+script = ExtResource("38_3f8qr")
 world = NodePath("../../../Simulation/World")
 rounds = NodePath("../../../Simulation/Rounds")
 
-[node name="LogWindow" type="Window" parent="." unique_id=830397088]
-script = ExtResource("40_0lksv")
+[node name="LogWindow" type="Window" parent="." unique_id=69046190]
+script = ExtResource("39_gsju6")

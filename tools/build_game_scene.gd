@@ -79,27 +79,6 @@ func _ready() -> void:
 	var fx_holder := Node3D.new()
 	fx_holder.name = "Fx"
 	_add(scene_root, fx_holder)
-	var motes := Node3D.new()
-	motes.name = "Motes"
-	_add(scene_root, motes)
-	var chem_b := _node(MultiMeshInstance3D, "BacterialSignals", motes, "res://scripts/board/mote_field.gd")
-	chem_b.world = world
-	chem_b.tile_board = board
-	chem_b.source = MoteField.Source.CHEM_BACTERIA
-	chem_b.per_tile = 3
-	chem_b.color = Color(0.7, 0.4, 1.0)
-	chem_b.energy = 1.0
-	chem_b.mote_size = 0.09
-	chem_b.boosted_in_view = Events.View.CHEMICAL
-	var chem_i := _node(MultiMeshInstance3D, "ImmuneSignals", motes, "res://scripts/board/mote_field.gd")
-	chem_i.world = world
-	chem_i.tile_board = board
-	chem_i.source = MoteField.Source.CHEM_IMMUNE
-	chem_i.per_tile = 3
-	chem_i.color = Color(0.3, 0.9, 1.0)
-	chem_i.energy = 1.0
-	chem_i.mote_size = 0.085
-	chem_i.boosted_in_view = Events.View.CHEMICAL
 	var orbs := _node(Node3D, "NutrientOrbs", scene_root, "res://scripts/board/nutrient_orbs.gd")
 	orbs.world = world
 	orbs.tile_board = board

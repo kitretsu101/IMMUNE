@@ -1,6 +1,6 @@
 class_name RoundRules
 extends RefCounted
-## End-of-round processing: feeding, tissue, antibiotics, signalling, reproduction, victory.
+## End-of-round processing: feeding, tissue, antibiotics, reproduction, victory.
 
 
 static func end_of_round(state: WorldState) -> Array:
@@ -10,7 +10,6 @@ static func end_of_round(state: WorldState) -> Array:
 	_feed(state, events)
 	_tissue(state, events)
 	_biofilm(state)
-	_chemicals(state, events)
 	_reproduce(state, events)
 	for id in state.organisms:
 		var organism: Organism = state.organisms[id]
@@ -174,35 +173,6 @@ static func _biofilm(state: WorldState) -> void:
 	for tile in state.count:
 		if state.biofilm[tile] > 0 and state.org_at(tile) == null and state.rng.randf() < 0.2:
 			state.biofilm[tile] -= 1
-
-
-static func _chemicals(state: WorldState, events: Array) -> void:
-	var bact := PackedFloat32Array(state.chem_bact)
-	var immune := PackedFloat32Array(state.chem_immune)
-	for organism in state.living(Sim.BACTERIA):
-		bact[organism.tile] += 1.0
-	for organism in state.living(Sim.IMMUNE):
-		immune[organism.tile] += 1.0 if organism.has_effect("Activated") else 0.4
-	var next_bact := PackedFloat32Array(bact)
-	var next_immune := PackedFloat32Array(immune)
-	var peak := 0.0
-	for tile in state.count:
-		if state.active[tile] == 0:
-			continue
-		var sum_b := 0.0
-		var sum_i := 0.0
-		for other in state.neighbors[tile]:
-			sum_b += bact[other]
-			sum_i += immune[other]
-		var degree := maxf(1.0, state.neighbors[tile].size())
-		next_bact[tile] = bact[tile] * 0.55 + sum_b / degree * 0.3
-		next_immune[tile] = immune[tile] * 0.55 + sum_i / degree * 0.3
-		peak = maxf(peak, next_bact[tile])
-	state.chem_bact = next_bact
-	state.chem_immune = next_immune
-	if peak > 1.4 and state.round % 4 == 0:
-		events.append(Ev.make("chem_signal", "Environment", "Quorum signalling in the bacterial colony.",
-			state.round, {"team": Sim.BACTERIA}))
 
 
 static func _reproduce(state: WorldState, events: Array) -> void:

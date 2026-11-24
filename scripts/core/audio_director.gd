@@ -37,7 +37,6 @@ const EVENT_MAP := {
 	"pickup": ["pickup", "Bacteria", Priority.HIGH, true, 0.08],
 	"eat": ["pickup", "Bacteria", Priority.NORMAL, true, 0.15],
 	"biofilm": ["bact_biofilm", "Bacteria", Priority.NORMAL, true, 0.2],
-	"chem_signal": ["bact_signal", "Bacteria", Priority.LOW, false, 1.0],
 	"antibiotic_hit": ["bact_antibiotic", "Bacteria", Priority.NORMAL, true, 0.2],
 	"antigen_detected": ["imm_detect", "Immune", Priority.NORMAL, true, 0.3],
 	"memory": ["memory_gain", "Immune", Priority.HIGH, true, 0.3],

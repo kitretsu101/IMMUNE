@@ -12,7 +12,7 @@ Human vs AI (pick a side), AI vs AI, Human vs Human, Sandbox (no win condition; 
 
 ## Rules in short
 
-Each round: immune turn, bacteria turn, then an end-of-round phase (feeding, antibiotics, tissue changes, signalling, reproduction with mutation). Bacteria win by infecting all human cells or wiping out the immune cells. Immune cells win by eliminating all bacteria. Reaching the round limit is a draw.
+Each round: immune turn, bacteria turn, then an end-of-round phase (feeding, antibiotics, tissue changes, reproduction with mutation). Bacteria win by infecting all human cells or wiping out the immune cells. Immune cells win by eliminating all bacteria. Reaching the round limit is a draw.
 
 Bacteria carry antigen, health, infectivity, reproduction, immune evasion, resistance, energy, inherited traits and temporary effects. One trait may mutate per offspring, and a rare antigen shift creates a new strain. Biofilm protects but slows reproduction. T cells clone with ±1 trait drift and gain memory against antigens they kill.
 

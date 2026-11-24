@@ -20,5 +20,5 @@ signal match_loaded
 signal infection_level(level: float)
 signal settings_changed
 
-enum View { NORMAL, INFECTION, NUTRIENTS, CHEMICAL, IMMUNE, EVOLUTION }
-const VIEW_NAMES := ["Normal", "Infection", "Nutrients", "Chemical", "Immune", "Evolution"]
+enum View { NORMAL, INFECTION, NUTRIENTS, IMMUNE, EVOLUTION }
+const VIEW_NAMES := ["Normal", "Infection", "Nutrients", "Immune", "Evolution"]

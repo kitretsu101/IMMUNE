@@ -16,8 +16,6 @@ var tissue := PackedByteArray()
 var tissue_timer := PackedInt32Array()
 var tissue_strain := PackedStringArray()
 var nutrients := PackedFloat32Array()
-var chem_bact := PackedFloat32Array()
-var chem_immune := PackedFloat32Array()
 var biofilm := PackedByteArray()
 var oxygen := 0.8
 var antibiotic := 0.0
@@ -57,10 +55,6 @@ func build_graph(adjacency: Array, tile_positions: PackedVector3Array, active_ti
 	tissue_strain.resize(count)
 	nutrients.resize(count)
 	nutrients.fill(0.0)
-	chem_bact.resize(count)
-	chem_bact.fill(0.0)
-	chem_immune.resize(count)
-	chem_immune.fill(0.0)
 	biofilm.resize(count)
 	biofilm.fill(0)
 	_compute_distances()
@@ -294,7 +288,7 @@ func to_dict() -> Dictionary:
 	return {
 		"setup": setup.to_dict(), "organisms": organism_list, "next_id": next_id,
 		"tissue": Array(tissue), "tissue_timer": Array(tissue_timer), "tissue_strain": Array(tissue_strain),
-		"nutrients": Array(nutrients), "chem_bact": Array(chem_bact), "chem_immune": Array(chem_immune),
+		"nutrients": Array(nutrients),
 		"biofilm": Array(biofilm), "oxygen": oxygen, "antibiotic": antibiotic, "round": round,
 		"side": side, "elapsed": elapsed, "finished": finished, "winner": winner,
 		"result_text": result_text, "strain_counters": strain_counters, "stats": stats, "core": Array(core),
@@ -313,8 +307,6 @@ func load_dict(data: Dictionary) -> void:
 	tissue_timer = PackedInt32Array(data.tissue_timer)
 	tissue_strain = PackedStringArray(data.tissue_strain)
 	nutrients = PackedFloat32Array(data.nutrients)
-	chem_bact = PackedFloat32Array(data.chem_bact)
-	chem_immune = PackedFloat32Array(data.chem_immune)
 	biofilm = PackedByteArray(data.biofilm)
 	core = PackedInt32Array(data.core)
 	oxygen = float(data.oxygen)

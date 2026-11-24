@@ -59,8 +59,6 @@ func _process(delta: float) -> void:
 			"damage": 1.0 if tissue == Sim.Tissue.DAMAGED else 0.0,
 			"destroyed": 1.0 if tissue == Sim.Tissue.DESTROYED else 0.0,
 			"nutrient": clampf(state.nutrients[tile] / 1.5, 0.0, 1.0),
-			"chem": clampf(state.chem_bact[tile] / 1.6, 0.0, 1.0),
-			"chem_immune": clampf(state.chem_immune[tile] / 1.6, 0.0, 1.0),
 			"biofilm": float(state.biofilm[tile]),
 			"hint": float(_hints[tile].amount) if _hints.has(tile) else 0.0,
 			"selected": 1.0 if tile == _selected else 0.0,
@@ -74,9 +72,6 @@ func _process(delta: float) -> void:
 			Events.View.NUTRIENTS:
 				overlay = Neon.NUTRIENT
 				target.overlay_amount = target.nutrient * 0.7
-			Events.View.CHEMICAL:
-				overlay = Neon.CHEMICAL.lerp(Neon.IMMUNE, state.chem_immune[tile] / maxf(0.01, state.chem_immune[tile] + state.chem_bact[tile]))
-				target.overlay_amount = clampf((state.chem_bact[tile] + state.chem_immune[tile]) / 1.6, 0.0, 1.0) * 0.7
 			Events.View.IMMUNE:
 				overlay = Neon.IMMUNE
 				target.overlay_amount = float(immune_tiles.get(tile, 0.0)) * 0.45
