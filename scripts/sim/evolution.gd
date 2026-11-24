@@ -2,7 +2,8 @@ class_name Evolution
 extends RefCounted
 ## Inheritance and mutation for offspring and immune clones.
 
-const BACTERIA_TRAITS := ["infectivity", "reproduction", "evasion"]
+const BACTERIA_TRAITS := ["infectivity", "reproduction", "evasion", "attack"]
+const IMMUNE_TRAITS := ["attack", "detection", "move_range", "evasion"]
 
 
 ## Returns {"child": Organism, "events": Array}. At most one trait mutates per offspring.
@@ -16,6 +17,10 @@ static func reproduce(state: WorldState, parent: Organism, tile: int) -> Diction
 	child.infectivity = parent.infectivity
 	child.reproduction = parent.reproduction
 	child.evasion = parent.evasion
+	child.attack = parent.attack
+	child.detection = parent.detection
+	child.regen = parent.regen
+	child.memory = parent.memory.duplicate()
 	child.resistance = parent.resistance
 	child.move_range = parent.move_range
 	child.energy = 1.0
@@ -67,32 +72,46 @@ static func _mutate(state: WorldState, parent: Organism, child: Organism) -> Arr
 	return events
 
 
-## Clonal evolution for T cells: one of attack / detection / range rolls -1, 0 or +1.
+## Clonal evolution for T cells. Mirrors bacterial mutation: same chance, same +1/-1 bias, same antigen shift.
 static func clone_immune(state: WorldState, parent: Organism, tile: int) -> Dictionary:
 	var child := Organism.new()
 	child.team = Sim.IMMUNE
+	child.antigen = parent.antigen
 	child.max_health = parent.max_health
 	child.health = parent.max_health
 	child.attack = parent.attack
 	child.detection = parent.detection
+	child.evasion = parent.evasion
+	child.regen = parent.regen
 	child.move_range = parent.move_range
+	child.energy = 1.0
 	child.generation = parent.generation + 1
 	child.parent_id = parent.id
 	child.born_round = state.round
 	child.algorithm = parent.algorithm
 	child.memory = parent.memory.duplicate()
-	var traits := ["attack", "detection", "move_range"]
-	var trait_name: String = traits[state.rng.randi() % traits.size()]
-	var delta := state.rng.randi_range(-1, 1)
-	var before: int = child.get(trait_name)
-	var upper := 4 if trait_name == "move_range" else Sim.MAX_TRAIT
-	var after := clampi(before + delta, 1, upper)
-	child.set(trait_name, after)
-	if after != before:
-		child.mutations.append("%s %d→%d" % [trait_name, before, after])
-		state.stats.mutations += 1
-	child.inherited = {"attack": parent.attack, "detection": parent.detection, "move_range": parent.move_range}
+	child.inherited = {"attack": parent.attack, "detection": parent.detection, "move_range": parent.move_range, "evasion": parent.evasion}
+	var text := "T cell #%d cloned #%d" % [parent.id, 0]
+	var changed := false
+	var note := " · traits steady"
+	if state.rng.randf() < state.setup.mutation_rate:
+		if state.rng.randf() < 0.14:
+			child.antigen = (child.antigen + 1 + state.rng.randi() % (Sim.ANTIGENS.size() - 1)) % Sim.ANTIGENS.size()
+			child.mutations.append("antigen %s→%s" % [parent.antigen_name(), child.antigen_name()])
+			state.stats.mutations += 1
+			changed = true
+			note = " · antigen %s→%s" % [parent.antigen_name(), child.antigen_name()]
+		else:
+			var trait_name: String = IMMUNE_TRAITS[state.rng.randi() % IMMUNE_TRAITS.size()]
+			var before: int = child.get(trait_name)
+			var upper := 4 if trait_name == "move_range" else Sim.MAX_TRAIT
+			var after := clampi(before + (1 if state.rng.randf() < 0.55 else -1), 1, upper)
+			if after != before:
+				child.set(trait_name, after)
+				child.mutations.append("%s %d→%d" % [trait_name, before, after])
+				state.stats.mutations += 1
+				changed = true
+				note = " · %s %d→%d" % [trait_name, before, after]
 	state.add_organism(child, tile)
-	var text := "T cell #%d cloned #%d" % [parent.id, child.id]
-	text += " · %s %d→%d" % [trait_name, before, after] if after != before else " · traits steady"
-	return {"child": child, "text": text, "changed": after != before}
+	text = "T cell #%d cloned #%d%s" % [parent.id, child.id, note]
+	return {"child": child, "text": text, "changed": changed}

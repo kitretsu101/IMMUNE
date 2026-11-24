@@ -15,6 +15,7 @@ var resistance := 1
 var attack := 4
 var detection := 4
 var move_range := 3
+var regen := 0.25
 var energy := 2.0
 var tile := -1
 var generation := 0

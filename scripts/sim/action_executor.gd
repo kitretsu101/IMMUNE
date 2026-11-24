@@ -41,21 +41,18 @@ static func _move(state: WorldState, organism: Organism, action: SimAction, even
 	var from_tile := organism.tile
 	organism.current_target = Ev.at(action.to)
 	state.move_organism(organism, action.to)
-	if organism.team == Sim.BACTERIA:
-		organism.energy = maxf(0.0, organism.energy - 0.25 * action.path.size())
+	organism.energy = maxf(0.0, organism.energy - Balance.MOVE_COST * action.path.size())
 	var pickup := 0.0
 	if state.nutrients[action.to] >= 0.4:
 		pickup = minf(1.2, state.nutrients[action.to])
 		state.nutrients[action.to] -= pickup
-		if organism.team == Sim.BACTERIA:
-			organism.energy = minf(MAX_ENERGY, organism.energy + pickup * 1.4)
-		else:
-			organism.health = minf(organism.max_health, organism.health + pickup)
+		organism.energy = minf(MAX_ENERGY, organism.energy + pickup * 1.4)
+		organism.health = minf(organism.max_health, organism.health + pickup * 0.5)
 	events.append(Ev.make("move", "Movement",
 		"%s moved to %s." % [organism.label(), Ev.at(action.to)], state.round,
 		{"org": organism.id, "tile": from_tile, "tile2": action.to, "path": action.path, "team": organism.team}))
 	if pickup > 0.0:
-		events.append(Ev.make("pickup", "Environment", ("%s picked up nutrients (+%.1f energy)." if organism.team == Sim.BACTERIA else "%s absorbed nutrients and healed %.1f.") % [organism.label(), pickup * (1.4 if organism.team == Sim.BACTERIA else 1.0)],
+		events.append(Ev.make("pickup", "Environment", "%s absorbed nutrients (+%.1f energy)." % [organism.label(), pickup * 1.4],
 			state.round, {"org": organism.id, "tile": action.to, "team": organism.team}))
 
 
@@ -66,8 +63,7 @@ static func _attack(state: WorldState, organism: Organism, action: SimAction, ev
 	if target == null or not target.alive or state.distance(organism.tile, target.tile) != 1:
 		return
 	organism.current_target = "#%d" % target.id
-	var immune_attacker := organism.team == Sim.IMMUNE
-	var chance := Balance.hit_chance(organism, target) if immune_attacker else Balance.bacteria_hit_chance(organism, target)
+	var chance := Balance.hit_chance(organism, target)
 	var hit := state.rng.randf() < chance
 	var base := {"org": organism.id, "other": target.id, "tile": organism.tile, "tile2": target.tile, "team": organism.team}
 	if not hit:
@@ -75,7 +71,7 @@ static func _attack(state: WorldState, organism: Organism, action: SimAction, ev
 			"%s attacked %s and missed (%d%%)." % [organism.label(), target.label(), roundi(chance * 100.0)],
 			state.round, base))
 		return
-	var damage := Balance.immune_damage(organism, target, state.biofilm[target.tile]) if immune_attacker else 1.0
+	var damage := Balance.damage(organism, target, state.biofilm[target.tile])
 	target.health -= damage
 	events.append(Ev.make("attack_hit", "Combat",
 		"%s hit %s for %.1f damage." % [organism.label(), target.label(), damage], state.round,
@@ -88,13 +84,13 @@ static func _kill(state: WorldState, killer: Organism, victim: Organism, events:
 	killer.kills += 1
 	var tile := victim.tile
 	state.remove_organism(victim)
-	var is_bacterium := victim.team == Sim.BACTERIA
-	if is_bacterium:
+	# Learning is shared: whoever lands a kill gets better against that lineage.
+	if victim.team == Sim.BACTERIA:
 		state.stats.eliminations += 1
-		killer.memory[victim.antigen] = mini(3, int(killer.memory.get(victim.antigen, 0)) + 1)
-		events.append(Ev.make("memory", "Combat",
-			"%s formed immune memory against antigen %s." % [killer.label(), victim.antigen_name()],
-			state.round, {"org": killer.id, "tile": killer.tile, "team": Sim.IMMUNE, "antigen": victim.antigen, "level": killer.memory[victim.antigen]}))
+	killer.memory[victim.antigen] = mini(3, int(killer.memory.get(victim.antigen, 0)) + 1)
+	events.append(Ev.make("memory", "Combat",
+		"%s learned to counter antigen %s." % [killer.label(), victim.antigen_name()],
+		state.round, {"org": killer.id, "tile": killer.tile, "team": killer.team, "antigen": victim.antigen, "level": killer.memory[victim.antigen]}))
 	events.append(Ev.make("death", "Death", "%s eliminated by %s." % [victim.label(), killer.label()],
 		state.round, {"org": victim.id, "other": killer.id, "tile": tile, "team": victim.team,
 			"victim_team": victim.team, "sev": Ev.NOTABLE}))
@@ -126,6 +122,7 @@ static func _infect(state: WorldState, organism: Organism, action: SimAction, ev
 
 
 static func _clone(state: WorldState, organism: Organism, action: SimAction, events: Array) -> void:
+	organism.energy = maxf(0.0, organism.energy - Balance.CLONE_COST)
 	var result := Evolution.clone_immune(state, organism, action.to)
 	organism.current_target = Ev.at(action.to)
 	events.append(Ev.make("clone", "Reproduction", result.text, state.round,

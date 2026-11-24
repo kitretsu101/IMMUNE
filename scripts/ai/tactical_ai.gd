@@ -224,7 +224,7 @@ static func _score_bacterium(state: WorldState, organism: Organism, action: SimA
 			return infection * p * worth + 0.15 * growth * p - 0.2 * survival * context.threat * (1.0 - p)
 		Sim.Kind.ATTACK:
 			var target := state.get_org(action.target_org)
-			return 0.15 + survival * Balance.bacteria_hit_chance(organism, target) * 0.9 - (1.0 - organism.health / organism.max_health) * 0.2
+			return 0.15 + survival * Balance.hit_chance(organism, target) * 0.9 - (1.0 - organism.health / organism.max_health) * 0.2
 		Sim.Kind.BIOFILM:
 			return survival * 0.7 * maxf(context.threat, state.antibiotic) - growth * 0.35 + 0.05
 		Sim.Kind.REPRODUCE:
@@ -241,7 +241,7 @@ static func _score_immune(state: WorldState, organism: Organism, action: SimActi
 		Sim.Kind.ATTACK:
 			var target := state.get_org(action.target_org)
 			var p := Balance.hit_chance(organism, target)
-			var damage := Balance.immune_damage(organism, target, state.biofilm[target.tile])
+			var damage := Balance.damage(organism, target, state.biofilm[target.tile])
 			var kill := 0.5 if target.health <= damage else 0.0
 			var proximity := _core_proximity(state, target.tile)
 			return hunt * (p * (0.9 + kill) + 0.3 * proximity) + 0.15 * defend * proximity

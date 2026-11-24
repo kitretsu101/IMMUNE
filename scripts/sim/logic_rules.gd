@@ -32,6 +32,7 @@ static func propositions(state: WorldState, organism: Organism) -> Dictionary:
 		props["room_to_grow"] = state.count_team(Sim.BACTERIA) < state.setup.bact_cap
 	else:
 		props["room_to_clone"] = state.count_team(Sim.IMMUNE) < state.setup.immune_cap \
+				and organism.energy >= Balance.CLONE_COST \
 				and not state.free_neighbors(organism.tile).is_empty()
 	return props
 
@@ -52,7 +53,7 @@ static func infect_targets(state: WorldState, organism: Organism) -> Array:
 static func attack_options(state: WorldState, organism: Organism, reach: Dictionary) -> Array:
 	var options: Array = []
 	var enemy := Sim.other(organism.team)
-	var reach_limit := organism.move_range if organism.team == Sim.IMMUNE else 0
+	var reach_limit := organism.move_range
 	for target in state.living(enemy):
 		var best_tile := -1
 		var best_cost := 999

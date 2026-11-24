@@ -19,23 +19,34 @@ var bact_evasion := 3
 var bact_resistance := 1
 var mutation_rate := 0.3
 var reproduction_rate := 1.0
-var bact_cap := 18
+var bact_cap := 12
+var bact_attack := 4
+var bact_range := 3
+var bact_health := 4.5
+var bact_regen := 0.25
 # Immune
 var immune_pop := 2
 var immune_attack := 4
 var immune_detection := 4
 var immune_range := 3
 var immune_activation := 2
-var immune_cap := 10
+var immune_cap := 12
+var immune_defence := 3
+var immune_health := 4.5
+var immune_regen := 0.25
 # AI
 var bact_ai := Sim.Algo.HYBRID
 var immune_ai := Sim.Algo.HYBRID
 var search_depth := 2
 var mcts_sims := 24
 # Rules
-var bact_actions := 3
+var bact_actions := 2
 var immune_actions := 2
 var max_rounds := 80
+# Victory: both sides share elimination, dominance (population ratio held for a few rounds) and a
+# population tiebreak at the round limit. Core takeover is an optional extra for the bacteria.
+var core_win := false
+var dominance_ratio := 3.0
 var rng_seed := 0
 var experiment_runs := 10
 

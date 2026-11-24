@@ -17,7 +17,7 @@ func _ready() -> void:
 func _on_event(event: Dictionary) -> void:
 	if not Config.event_popups:
 		return
-	if event.sev == Ev.IMPORTANT or event.sev == Ev.CRITICAL or event.type in ["infect_ok", "mutation", "tissue_destroyed"]:
+	if event.sev == Ev.IMPORTANT or event.sev == Ev.CRITICAL or event.type in ["infect_ok", "mutation", "tissue_destroyed", "memory"]:
 		_toast(event.msg, event.sev)
 
 

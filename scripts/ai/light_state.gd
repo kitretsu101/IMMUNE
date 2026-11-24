@@ -34,6 +34,10 @@ var ua := PackedFloat32Array()
 var ud := PackedFloat32Array()
 var ur := PackedInt32Array()
 var ue := PackedFloat32Array()
+var uk := PackedFloat32Array()
+var uf := PackedFloat32Array()
+var hp_b := 4.5
+var hp_i := 4.5
 var bonus := 0.0
 var nodes := 0
 var within: Array = []
@@ -53,6 +57,8 @@ static func from_world(state: WorldState) -> LightState:
 	light.cap_i = state.setup.immune_cap
 	light.ap_b = state.setup.bact_actions
 	light.ap_i = state.setup.immune_actions
+	light.hp_b = state.setup.bact_health
+	light.hp_i = state.setup.immune_health
 	light.occ.resize(state.count)
 	light.within = state.within_tiles(4)
 	light.tissue = state.tissue.duplicate()
@@ -69,11 +75,11 @@ static func from_world(state: WorldState) -> LightState:
 		light._add(organism.id, organism.tile, Sim.BACTERIA if bacterium else Sim.IMMUNE, organism.health,
 			organism.infectivity if bacterium else organism.attack,
 			organism.evasion if bacterium else organism.detection,
-			organism.move_range, organism.energy)
+			organism.move_range, organism.energy, organism.attack, organism.evasion)
 	return light
 
 
-func _add(id: int, tile: int, side: int, hp: float, a: float, d: float, r: int, e: float) -> int:
+func _add(id: int, tile: int, side: int, hp: float, a: float, d: float, r: int, e: float, k := 4.0, f := 3.0) -> int:
 	uid.append(id)
 	ut.append(tile)
 	us.append(side)
@@ -82,6 +88,8 @@ func _add(id: int, tile: int, side: int, hp: float, a: float, d: float, r: int, 
 	ud.append(d)
 	ur.append(r)
 	ue.append(e)
+	uk.append(k)
+	uf.append(f)
 	occ[tile] = BACT_OCC if side == Sim.BACTERIA else IMMUNE_OCC
 	return uid.size() - 1
 
@@ -108,6 +116,10 @@ func copy() -> LightState:
 	other.ud = ud.duplicate()
 	other.ur = ur.duplicate()
 	other.ue = ue.duplicate()
+	other.uk = uk.duplicate()
+	other.uf = uf.duplicate()
+	other.hp_b = hp_b
+	other.hp_i = hp_i
 	other.bonus = bonus
 	other.infected_count = infected_count
 	other.within = within
@@ -249,40 +261,45 @@ func candidates(u: int, limit := 4) -> Array:
 				infect_best = tile
 		if infect_best >= 0:
 			list.append([K_INFECT, infect_best, -1])
-		for other in uid.size():
-			if us[other] == Sim.IMMUNE and uh[other] > 0.0 and d(own, ut[other]) == 1:
-				list.append([K_ATTACK, own, other])
+		_append_attacks(list, u, tiles)
 		if ue[u] >= 2.0 and bio[own] < Balance.MAX_BIOFILM:
 			list.append([K_BIOFILM, own, -1])
 		list.append([K_REST, own, -1])
 	else:
-		for other in uid.size():
-			if us[other] != Sim.BACTERIA or uh[other] <= 0.0:
-				continue
-			var approach := -1
-			var best_cost := 99
-			if d(own, ut[other]) == 1:
-				approach = own
-				best_cost = 0
-			for tile in tiles:
-				if d(tile, ut[other]) == 1 and d(own, tile) < best_cost:
-					best_cost = d(own, tile)
-					approach = tile
-			if approach >= 0:
-				list.append([K_ATTACK, approach, other])
+		_append_attacks(list, u, tiles)
 		var scored: Array = []
 		for tile in tiles:
 			scored.append([_tile_goal(u, tile), tile])
 		scored.sort_custom(func(a: Array, b: Array) -> bool: return a[0] > b[0])
 		for index in mini(limit - 1, scored.size()):
 			list.append([K_MOVE, scored[index][1], -1])
-		if count_side(Sim.IMMUNE) < cap_i:
+		if count_side(Sim.IMMUNE) < cap_i and ue[u] >= Balance.CLONE_COST:
 			for next in nbr[own]:
 				if occ[next] == FREE:
 					list.append([K_CLONE, next, -1])
 					break
 	list.append([K_WAIT, own, -1])
 	return list
+
+
+## Move-then-attack options. Identical rule for both sides.
+func _append_attacks(list: Array, u: int, tiles: Array) -> void:
+	var own := ut[u]
+	var enemy := Sim.other(us[u])
+	for other in uid.size():
+		if us[other] != enemy or uh[other] <= 0.0:
+			continue
+		var approach := -1
+		var best_cost := 99
+		if d(own, ut[other]) == 1:
+			approach = own
+			best_cost = 0
+		for tile in tiles:
+			if d(tile, ut[other]) == 1 and d(own, tile) < best_cost:
+				best_cost = d(own, tile)
+				approach = tile
+		if approach >= 0:
+			list.append([K_ATTACK, approach, other])
 
 
 func apply(u: int, cand: Array) -> void:
@@ -293,26 +310,20 @@ func apply(u: int, cand: Array) -> void:
 	match kind:
 		K_MOVE:
 			occ[ut[u]] = FREE
-			if side == Sim.BACTERIA:
-				ue[u] = maxf(0.0, ue[u] - 0.25 * d(ut[u], tile))
+			ue[u] = maxf(0.0, ue[u] - Balance.MOVE_COST * d(ut[u], tile))
 			ut[u] = tile
 			occ[tile] = BACT_OCC if side == Sim.BACTERIA else IMMUNE_OCC
 		K_ATTACK:
 			var target: int = cand[2]
 			if tile != ut[u]:
 				occ[ut[u]] = FREE
+				ue[u] = maxf(0.0, ue[u] - Balance.MOVE_COST * d(ut[u], tile))
 				ut[u] = tile
 				occ[tile] = BACT_OCC if side == Sim.BACTERIA else IMMUNE_OCC
 			if uh[target] <= 0.0:
 				return
-			var p: float
-			var damage: float
-			if side == Sim.IMMUNE:
-				p = clampf(0.33 + 0.05 * ud[u] - 0.05 * ud[target], 0.15, 0.95)
-				damage = maxf(0.5, 1.0 + (0.5 if ua[u] >= 6.0 else 0.0) - 0.4 * bio[ut[target]])
-			else:
-				p = clampf(0.28 + 0.05 * ua[u] - 0.04 * ua[target], 0.1, 0.8)
-				damage = 1.0
+			var p := clampf(Balance.HIT_BASE + 0.05 * uk[u] - 0.05 * uf[target], 0.15, 0.95)
+			var damage := maxf(0.5, 1.0 + (0.5 if uk[u] >= 6.0 else 0.0) - 0.4 * bio[ut[target]])
 			uh[target] -= p * damage
 			if uh[target] <= 0.25:
 				uh[target] = 0.0
@@ -328,7 +339,8 @@ func apply(u: int, cand: Array) -> void:
 			else:
 				bonus += p * worth
 		K_CLONE:
-			_add(-1, tile, Sim.IMMUNE, 4.0, ua[u], ud[u], ur[u], 0.0)
+			ue[u] = maxf(0.0, ue[u] - Balance.CLONE_COST)
+			_add(-1, tile, Sim.IMMUNE, hp_i, ua[u], ud[u], ur[u], 1.0, uk[u], uf[u])
 		K_BIOFILM:
 			bio[tile] = mini(Balance.MAX_BIOFILM, bio[tile] + 1)
 			ue[u] -= 2.0
@@ -374,7 +386,7 @@ func policy_action(u: int, rng: RandomNumberGenerator, epsilon: float) -> Array:
 			for tile in nbr[ut[focus]]:
 				if occ[tile] == FREE and d(own, tile) <= ur[u]:
 					return [K_ATTACK, tile, focus]
-		if count_side(Sim.IMMUNE) < cap_i and rng.randf() < 0.3:
+		if count_side(Sim.IMMUNE) < cap_i and ue[u] >= Balance.CLONE_COST and rng.randf() < 0.3:
 			for next in nbr[own]:
 				if occ[next] == FREE:
 					return [K_CLONE, next, -1]
@@ -450,14 +462,15 @@ func simulate_round(rng: RandomNumberGenerator, first: int, epsilon: float) -> v
 			if uh[u] > 0.0:
 				apply(u, policy_action(u, rng, epsilon))
 	for u in uid.size():
-		if us[u] == Sim.BACTERIA and uh[u] > 0.0:
-			ue[u] = minf(8.0, ue[u] + minf(0.6, nut[ut[u]]) * 1.2 - 0.25)
+		if uh[u] > 0.0:
+			ue[u] = minf(8.0, ue[u] + minf(0.6, nut[ut[u]]) * 1.2 - Balance.UPKEEP)
 			nut[ut[u]] = maxf(0.0, nut[ut[u]] - 0.6)
+		if us[u] == Sim.BACTERIA and uh[u] > 0.0:
 			if ue[u] >= Balance.REPRO_COST and count_side(Sim.BACTERIA) < cap_b and rng.randf() < 0.6:
 				for next in nbr[ut[u]]:
 					if occ[next] == FREE:
 						ue[u] -= Balance.REPRO_COST
-						_add(-1, next, Sim.BACTERIA, 5.0, ua[u], ud[u], ur[u], 1.0)
+						_add(-1, next, Sim.BACTERIA, hp_b, ua[u], ud[u], ur[u], 1.0, uk[u], uf[u])
 						bonus += 0.4
 						break
 		if us[u] == Sim.BACTERIA and uh[u] > 0.0 and tissue[ut[u]] == Sim.Tissue.INFECTED:

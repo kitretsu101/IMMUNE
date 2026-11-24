@@ -18,6 +18,7 @@ var base_ring: MeshInstance3D
 var select_ring: MeshInstance3D
 var health_bar: MeshInstance3D
 var tag_label: Label3D
+var memory_aura: MeshInstance3D
 var color := Color.WHITE
 var phase := 0.0
 
@@ -71,11 +72,25 @@ func build(organism: Organism, model_scene: PackedScene, rim_shader: Shader, rin
 	select_ring.visible = false
 	health_bar = _make_bar(bar_shader)
 	_bar_material = health_bar.material_override
+	memory_aura = MeshInstance3D.new()
+	var aura_quad := QuadMesh.new()
+	aura_quad.size = Vector2(2.4, 2.4)
+	aura_quad.orientation = PlaneMesh.FACE_Y
+	memory_aura.mesh = aura_quad
+	var aura_material := ShaderMaterial.new()
+	aura_material.shader = load("res://scenes/shaders/aura.gdshader")
+	aura_material.set_shader_parameter("aura_color", Vector3(1.0, 0.78, 0.3))
+	aura_material.set_shader_parameter("energy", 1.6)
+	memory_aura.material_override = aura_material
+	memory_aura.position.y = 0.08
+	memory_aura.visible = false
+	memory_aura.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(memory_aura)
 	tag_label = Label3D.new()
 	tag_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	tag_label.no_depth_test = true
 	tag_label.pixel_size = 0.006
-	tag_label.font_size = 34
+	tag_label.font_size = 42
 	tag_label.outline_size = 12
 	tag_label.outline_modulate = Color(0.01, 0.03, 0.1, 0.95)
 	tag_label.position = Vector3(0, 1.5, 0)
@@ -218,7 +233,10 @@ func _apply_color_only() -> void:
 	for rim in _rim_materials:
 		rim.set_shader_parameter("rim_color", Vector3(shown.r, shown.g, shown.b))
 		rim.set_shader_parameter("pulse_speed", 3.6 if _memory else 2.0)
-		rim.set_shader_parameter("rim_energy", 2.3 if _memory else 1.7)
+		rim.set_shader_parameter("rim_energy", 2.6 if _memory else 1.7)
+		rim.set_shader_parameter("core_fill", 0.4 if _memory else 0.1)
+	if memory_aura:
+		memory_aura.visible = _memory
 	if _swim_material:
 		_swim_material.set_shader_parameter("body_color", Vector3(color.r, color.g, color.b))
 	pass

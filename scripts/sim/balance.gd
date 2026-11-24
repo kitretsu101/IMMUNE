@@ -2,28 +2,32 @@ class_name Balance
 extends RefCounted
 ## Every tuning number that maps a 1-10 trait to a probability lives here.
 
-const REPRO_COST := 2.5
+static var REPRO_COST := 3.4   # bacteria grow passively (no action), so a division costs more energy than a clone
 const BIOFILM_COST := 2.0
 const MAX_BIOFILM := 3
 const NUTRIENT_CAP := 2.0
 const REPRO_TEMP_PENALTY := 0.65
+static var HIT_BASE := 0.20
+static var CLONE_COST := 2.5
+static var CLEANSE_ENERGY := 2.0
+static var MOVE_COST := 0.25
+static var UPKEEP := 0.15
+static var STARVE_DAMAGE := 0.5
+static var START_ENERGY := 3.0
 
 
+## One combat model for both sides: attack/learning/activation against the defender's defence (evasion).
 static func hit_chance(attacker: Organism, defender: Organism) -> float:
-	var memory_bonus := float(attacker.memory.get(defender.antigen, 0)) * 0.5
+	var learned := float(attacker.memory.get(defender.antigen, 0)) * 0.5
 	var activation := attacker.effect_value("Activated", 0.0)
-	var p := 0.33 + 0.05 * (attacker.detection + memory_bonus + activation) - 0.05 * defender.evasion
+	var p := HIT_BASE + 0.05 * (attacker.attack + learned + activation) - 0.05 * defender.evasion
 	return clampf(p, 0.15, 0.95)
 
 
-static func immune_damage(attacker: Organism, defender: Organism, biofilm_level: int) -> float:
-	var damage := 1.0 + (0.5 if attacker.attack >= 6 else 0.0) + attacker.effect_value("Activated", 0.0) * 0.25
-	damage -= 0.4 * biofilm_level + (0.3 if defender.has_effect("Hardened") else 0.0)
-	return maxf(0.5, damage)
-
-
-static func bacteria_hit_chance(attacker: Organism, defender: Organism) -> float:
-	return clampf(0.28 + 0.05 * attacker.infectivity - 0.04 * defender.attack - defender.effect_value("Activated", 0.0) * 0.03, 0.1, 0.8)
+static func damage(attacker: Organism, defender: Organism, biofilm_level: int) -> float:
+	var dealt := 1.0 + (0.5 if attacker.attack >= 6 else 0.0) + attacker.effect_value("Activated", 0.0) * 0.25
+	dealt -= 0.4 * biofilm_level + (0.3 if defender.has_effect("Hardened") else 0.0)
+	return maxf(0.5, dealt)
 
 
 static func infect_chance(state: WorldState, organism: Organism, tile: int) -> float:

@@ -108,12 +108,14 @@ static func algorithm_label(setup: GameSetup, team: int) -> String:
 static func new_immune(state: WorldState, setup: GameSetup) -> Organism:
 	var cell := Organism.new()
 	cell.team = Sim.IMMUNE
-	cell.max_health = 4.0
-	cell.health = 4.0
+	cell.max_health = setup.immune_health
+	cell.health = setup.immune_health
 	cell.attack = setup.immune_attack
 	cell.detection = setup.immune_detection
+	cell.evasion = setup.immune_defence
 	cell.move_range = setup.immune_range
-	cell.energy = 0.0
+	cell.regen = setup.immune_regen
+	cell.energy = Balance.START_ENERGY
 	cell.born_round = state.round
 	return cell
 
@@ -124,14 +126,16 @@ static func new_bacterium(state: WorldState, setup: GameSetup, antigen: int) -> 
 	bacterium.team = Sim.BACTERIA
 	bacterium.antigen = antigen % Sim.ANTIGENS.size()
 	bacterium.strain = "%s-%d" % [Sim.ANTIGENS[bacterium.antigen], state.strain_counters[bacterium.antigen]]
-	bacterium.max_health = 5.0
-	bacterium.health = 5.0
+	bacterium.max_health = setup.bact_health
+	bacterium.health = setup.bact_health
+	bacterium.attack = clampi(setup.bact_attack + bonus, 1, Sim.MAX_TRAIT)
+	bacterium.regen = setup.bact_regen
 	bacterium.infectivity = clampi(setup.bact_infectivity + bonus, 1, Sim.MAX_TRAIT)
 	bacterium.reproduction = clampi(setup.bact_reproduction + bonus, 1, Sim.MAX_TRAIT)
 	bacterium.evasion = clampi(setup.bact_evasion + bonus, 1, Sim.MAX_TRAIT)
 	bacterium.resistance = clampi(setup.bact_resistance, 0, Sim.MAX_TRAIT)
-	bacterium.move_range = 2
-	bacterium.energy = 3.0
+	bacterium.move_range = setup.bact_range
+	bacterium.energy = Balance.START_ENERGY
 	bacterium.born_round = state.round
 	bacterium.inherited = bacterium.trait_snapshot()
 	return bacterium

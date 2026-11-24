@@ -18,6 +18,7 @@ static func end_of_round(state: WorldState) -> Array:
 		organism.tick_effects()
 	var bacteria := state.count_team(Sim.BACTERIA)
 	state.stats.bact_peak = maxi(state.stats.bact_peak, bacteria)
+	_update_dominance(state)
 	if bacteria <= int(state.stats.bact_peak * 0.25) and state.stats.bact_peak >= 6 and not state.stats.collapse_flag:
 		state.stats.collapse_flag = true
 		events.append(Ev.make("pop_collapse", "Environment", "Bacterial population collapse.", state.round,
@@ -29,25 +30,42 @@ static func end_of_round(state: WorldState) -> Array:
 	return events
 
 
+const DOMINANCE_ROUNDS := 3
+const DOMINANCE_MIN_UNITS := 6
+
+
+## A side that keeps a large population lead for several rounds wins. Same rule for both sides.
+static func _update_dominance(state: WorldState) -> void:
+	var counts := {Sim.IMMUNE: state.count_team(Sim.IMMUNE), Sim.BACTERIA: state.count_team(Sim.BACTERIA)}
+	for team in counts:
+		var foe: int = counts[Sim.other(team)]
+		var ahead: bool = counts[team] >= DOMINANCE_MIN_UNITS and counts[team] >= foe * state.setup.dominance_ratio
+		var key := "dominance_%d" % team
+		state.stats[key] = (int(state.stats.get(key, 0)) + 1) if ahead else 0
+
+
 static func _detect_and_activate(state: WorldState, events: Array) -> void:
 	var any_active := false
-	for cell in state.living(Sim.IMMUNE):
-		var radius: int = 1 + cell.detection / 3
-		var seen: Organism = null
-		for bacterium in state.living(Sim.BACTERIA):
-			if state.distance(cell.tile, bacterium.tile) <= radius:
-				seen = bacterium
-				break
-		if seen != null:
-			var newly: bool = not cell.has_effect("Activated")
-			cell.add_effect("Activated", state.setup.immune_activation, 1.0)
-			any_active = true
-			if newly:
-				events.append(Ev.make("antigen_detected", "Combat",
-					"%s detected antigen %s." % [cell.label(), seen.antigen_name()], state.round,
-					{"org": cell.id, "other": seen.id, "tile": cell.tile, "tile2": seen.tile, "team": Sim.IMMUNE}))
-		elif cell.has_effect("Activated"):
-			any_active = true
+	for team in [Sim.IMMUNE, Sim.BACTERIA]:
+		var enemy := Sim.other(team)
+		for cell in state.living(team):
+			var radius: int = 1 + cell.detection / 3
+			var seen: Organism = null
+			for foe in state.living(enemy):
+				if state.distance(cell.tile, foe.tile) <= radius:
+					seen = foe
+					break
+			if seen != null:
+				var newly: bool = not cell.has_effect("Activated")
+				cell.add_effect("Activated", state.setup.immune_activation, 1.0)
+				if team == Sim.IMMUNE:
+					any_active = true
+				if newly:
+					events.append(Ev.make("antigen_detected", "Combat",
+						"%s detected antigen %s." % [cell.label(), seen.antigen_name()], state.round,
+						{"org": cell.id, "other": seen.id, "tile": cell.tile, "tile2": seen.tile, "team": team}))
+			elif cell.has_effect("Activated") and team == Sim.IMMUNE:
+				any_active = true
 	if any_active and not state.stats.get("immune_active", false):
 		events.append(Ev.make("immune_activation", "Combat", "Immune system activated.", state.round,
 			{"sev": Ev.IMPORTANT, "team": Sim.IMMUNE}))
@@ -58,24 +76,28 @@ static func _feed(state: WorldState, events: Array) -> void:
 	for tile in state.count:
 		if state.tissue[tile] == Sim.Tissue.INFECTED:
 			state.nutrients[tile] = minf(Balance.NUTRIENT_CAP, state.nutrients[tile] + 0.3)
-	for bacterium in state.living(Sim.BACTERIA):
-		var tile: int = bacterium.tile
-		var appetite := 0.6 + (0.3 if bacterium.has_effect("Resting") else 0.0)
+	for organism in state.organisms.values().duplicate():
+		if not organism.alive:
+			continue
+		var tile: int = organism.tile
+		var appetite := 0.6 + (0.3 if organism.has_effect("Resting") else 0.0)
 		var eaten := minf(appetite, state.nutrients[tile])
 		if eaten > 0.05:
 			state.nutrients[tile] -= eaten
-			bacterium.energy = minf(ActionExecutor.MAX_ENERGY, bacterium.energy + eaten * 1.2)
+			organism.energy = minf(ActionExecutor.MAX_ENERGY, organism.energy + eaten * 1.2)
 			if eaten > 0.4 and state.rng.randf() < 0.3:
-				events.append(Ev.make("eat", "Environment", "%s absorbed nutrients." % bacterium.label(),
-					state.round, {"org": bacterium.id, "tile": tile, "team": Sim.BACTERIA}))
-		bacterium.energy -= 0.25
-		if bacterium.energy < 0.0:
-			bacterium.energy = 0.0
-			bacterium.health -= 0.5
-			if bacterium.health <= 0.0:
-				state.remove_organism(bacterium)
-				events.append(Ev.make("death", "Death", "%s starved." % bacterium.label(), state.round,
-					{"org": bacterium.id, "tile": tile, "team": Sim.BACTERIA, "victim_team": Sim.BACTERIA, "sev": Ev.NOTABLE}))
+				events.append(Ev.make("eat", "Environment", "%s absorbed nutrients." % organism.label(),
+					state.round, {"org": organism.id, "tile": tile, "team": organism.team}))
+		organism.energy -= Balance.UPKEEP
+		if organism.energy < 0.0:
+			organism.energy = 0.0
+			organism.health -= Balance.STARVE_DAMAGE
+			if organism.health <= 0.0:
+				state.remove_organism(organism)
+				events.append(Ev.make("death", "Death", "%s starved." % organism.label(), state.round,
+					{"org": organism.id, "tile": tile, "team": organism.team, "victim_team": organism.team, "sev": Ev.NOTABLE}))
+		elif organism.energy >= 1.0 and organism.health < organism.max_health:
+			organism.health = minf(organism.max_health, organism.health + organism.regen)
 	for tile in state.count:
 		if state.active[tile] == 1 and state.tissue[tile] != Sim.Tissue.DESTROYED:
 			state.nutrients[tile] = minf(Balance.NUTRIENT_CAP, state.nutrients[tile] + 0.01 * state.setup.nutrient_level)
@@ -114,6 +136,7 @@ static func _tissue(state: WorldState, events: Array) -> void:
 				if occupant != null and occupant.team == Sim.IMMUNE:
 					state.tissue[tile] = Sim.Tissue.DAMAGED
 					state.tissue_timer[tile] = 0
+					occupant.energy = minf(ActionExecutor.MAX_ENERGY, occupant.energy + Balance.CLEANSE_ENERGY)
 					events.append(Ev.make("tissue_cleansed", "Infection",
 						"%s cleansed infection at %s." % [occupant.label(), Ev.at(tile)], state.round,
 						{"org": occupant.id, "tile": tile, "team": Sim.IMMUNE}))
@@ -230,11 +253,26 @@ static func check_victory(state: WorldState) -> Dictionary:
 	elif state.count_team(Sim.IMMUNE) == 0:
 		winner = Sim.BACTERIA
 		text = "Bacterial victory · immune cells wiped out"
-	elif state.core_infected() >= state.core.size():
+	elif state.setup.core_win and state.core_infected() >= state.core.size():
 		winner = Sim.BACTERIA
 		text = "Bacterial victory · all human cells infected"
+	elif int(state.stats.get("dominance_%d" % Sim.IMMUNE, 0)) >= DOMINANCE_ROUNDS:
+		winner = Sim.IMMUNE
+		text = "Immune victory · overwhelming numbers held"
+	elif int(state.stats.get("dominance_%d" % Sim.BACTERIA, 0)) >= DOMINANCE_ROUNDS:
+		winner = Sim.BACTERIA
+		text = "Bacterial victory · overwhelming numbers held"
 	elif state.round > state.setup.max_rounds:
-		text = "Draw · round limit reached"
+		var immune_units := state.count_team(Sim.IMMUNE)
+		var bacteria_units := state.count_team(Sim.BACTERIA)
+		if immune_units > bacteria_units:
+			winner = Sim.IMMUNE
+			text = "Immune victory · more cells at the round limit"
+		elif bacteria_units > immune_units:
+			winner = Sim.BACTERIA
+			text = "Bacterial victory · more cells at the round limit"
+		else:
+			text = "Draw · round limit reached"
 	else:
 		return {}
 	state.finished = true
