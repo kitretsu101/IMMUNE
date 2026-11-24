@@ -101,11 +101,74 @@ func _refresh() -> void:
 	}
 	var shown := {"move": true, "wait": true, "clone": team == Sim.IMMUNE, "infect": team == Sim.BACTERIA,
 		"biofilm": team == Sim.BACTERIA, "rest": team == Sim.BACTERIA}
+	var selected_org := human.selected()
 	for key in _buttons:
 		var entry: Array = _buttons[key]
 		var button: Button = entry[0]
 		button.visible = shown[key]
 		button.disabled = not enabled[key] or rounds.busy
+		button.tooltip_text = _tooltip_for(key, state, selected_org, enabled[key], rounds.busy)
 		if entry[2]:
 			button.set_pressed_no_signal(human.action_mode == entry[1])
 	_end.disabled = rounds.busy
+
+
+func _tooltip_for(key: String, state: WorldState, organism: Organism, is_enabled: bool, is_busy: bool) -> String:
+	if is_busy:
+		return "Simulation is busy..."
+	match key:
+		"clone":
+			if organism == null:
+				return "Select an active T cell to clone."
+			if organism.team != Sim.IMMUNE:
+				return "Only immune T cells can clone."
+			if organism.acted:
+				return "This T cell has already acted this turn."
+			if organism.energy < Balance.CLONE_COST:
+				return "Insufficient energy: needs %.1f Energy to clone (current: %.1f). Move onto nutrients or cleanse infected tissue to gain energy." % [Balance.CLONE_COST, organism.energy]
+			if state.free_neighbors(organism.tile).is_empty():
+				return "No free adjacent tiles to place a clone."
+			if state.count_team(Sim.IMMUNE) >= state.setup.immune_cap:
+				return "Immune population cap reached (%d/%d cells)." % [state.count_team(Sim.IMMUNE), state.setup.immune_cap]
+			return "Clone this T cell into an adjacent empty tile (Costs %.1f Energy)." % Balance.CLONE_COST
+		"move":
+			if organism == null:
+				return "Select an organism to move or attack."
+			if organism.acted:
+				return "This cell has already acted this turn."
+			if not is_enabled:
+				return "No reachable tiles or attack targets."
+			return "Move to a highlighted cyan tile or attack an adjacent enemy on an orange tile."
+		"infect":
+			if organism == null:
+				return "Select a bacterium to infect tissue."
+			if organism.acted:
+				return "This bacterium has already acted this turn."
+			if not is_enabled:
+				return "No valid uninfected tissue within reach."
+			return "Infect a neighboring healthy or damaged tile."
+		"biofilm":
+			if organism == null:
+				return "Select a bacterium."
+			if organism.acted:
+				return "This bacterium has already acted this turn."
+			if organism.energy < Balance.BIOFILM_COST:
+				return "Insufficient energy: needs %.1f Energy for biofilm (current: %.1f)." % [Balance.BIOFILM_COST, organism.energy]
+			if state.biofilm[organism.tile] >= Balance.MAX_BIOFILM:
+				return "Biofilm is already at max level on this tile."
+			return "Produce protective biofilm on current tile (Costs %.1f Energy)." % Balance.BIOFILM_COST
+		"rest":
+			if organism == null:
+				return "Select a bacterium."
+			if organism.acted:
+				return "This bacterium has already acted this turn."
+			if organism.energy < Balance.REPRO_COST:
+				return "Low energy: needs %.1f Energy to reproduce at round end (current: %.1f)." % [Balance.REPRO_COST, organism.energy]
+			return "Rest this turn and prepare to reproduce at round end."
+		"wait":
+			if organism == null:
+				return "Select an organism."
+			if organism.acted:
+				return "This cell has already acted this turn."
+			return "End this cell's turn without moving or acting."
+	return ""

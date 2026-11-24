@@ -39,7 +39,7 @@ func _ready() -> void:
 	_steps = [
 		["Welcome - you joined mid-battle", "This is round 6 of a live match. You command the blue **T cells**; bacteria are infecting the gold **human cells**. The tour will light up each important thing on the board and show its live numbers.", null, cyan, ""],
 		["The human cells", "The seven gold cells are what you protect. If **all seven turn red** (infected or destroyed) the bacteria win. One is already infected.", {"core": true}, Neon.YELLOW, "core"],
-		["Your T cell", "Blue cells are yours. This one is **ACTIVE** (it spotted bacteria, so it hits harder) and has **immune memory** of antigen A from earlier kills. It can move up to its range, attack a neighbour, or clone itself; clones inherit memory and may drift one trait by -1, 0 or +1.", {"org": "tcell"}, Neon.IMMUNE, "org"],
+		["Your T cell", "Blue cells are yours. This one is **ACTIVE** (it spotted bacteria, so it hits harder) and has **immune memory** of antigen A from earlier kills. It can move, attack a neighbour, or clone into an adjacent hex. **Cloning requires 2.5 Energy**; clones inherit memory and may drift one trait by -1, 0 or +1.", {"org": "tcell"}, Neon.IMMUNE, "org"],
 		["Immune memory", "When a T cell **eliminates** a bacterium it remembers that bacterium's **antigen** (A, B, C or D). Memory is **specific**: it only helps against that antigen, adding **+2.5% hit chance per level** (up to level 3). Memory cells **glow gold** with a **MEMORY** tag, and clones inherit it. A bacterium that shifts antigen (a new strain) escapes the memory.", {"org": "tcell"}, Color(1.0, 0.82, 0.45), "org"],
 		["A normal bacterium", "Green rods are bacteria. **Infectivity** is the chance to infect tissue, **reproduction** the chance to split at round end, **evasion** makes your attacks miss, **energy** pays for reproduction.", {"org": "enemy"}, Neon.BACTERIA, "org"],
 		["A mutant", "Offspring can mutate **one trait by +-1** (or rarely change antigen). Mutations are **inherited**. Colours never change: a mutant has a **purple ring**, a **MUTANT** tag and a purple caption when it happens. Its inspector lists the mutations and its parent. This one has higher evasion, so it is harder to hit.", {"org": "mutant"}, Neon.PURPLE, "org"],
@@ -55,10 +55,10 @@ func _ready() -> void:
 		["Population panel", "Living and dead bacteria, offspring this round, **dominant strain**, and your cells: **active**, dead and **eliminations**, with a population chart.", {"ui": "left"}, cyan, ""],
 		["Environment panel", "Healthy / infected / damaged / destroyed tissue and the nutrient level. **Board view** buttons recolour the board (Infection, Nutrients, Immune, Evolution).", {"ui": "right"}, cyan, ""],
 		["Inspector", "Click any cell to see its health, energy, traits, generation, mutations, current action and the AI's last decision.", {"ui": "organism"}, cyan, ""],
-		["Your actions", "**Move/Attack [M]** (cyan tiles move, orange attack), **Clone [C]**, **Wait [W]**, **End turn [Space]**. Each cell acts once per turn.", {"ui": "actions"}, cyan, ""],
+		["Your actions", "**Move/Attack [M]** (cyan tiles move, orange attack), **Clone [C]** (costs 2.5 Energy into an empty adjacent tile), **Wait [W]**, **End turn [Space]**. Each cell acts once per turn.", {"ui": "actions"}, cyan, ""],
 		["Event log and captions", "Captions on the board and this log tell you what happened: **INFECTED!**, **MUTATION**, **SPLIT**, damage numbers, **MISS**, **CLEANSED**, **+NUTRIENTS**.", {"ui": "log"}, cyan, ""],
 		["Simulation controls", "Pause, stop, step a round, restart, save, load, speed 0.25x to 16x, unlimited mode, and the **log window** (L) with AI decisions and performance.", {"ui": "toolbar"}, cyan, ""],
-		["Your turn", "Select your active T cell, press **M** and attack the nearest bacterium (orange tile). Clone when you have spare actions. Good luck!", null, cyan, ""],
+		["Your turn", "Select your active T cell, press **M** and attack the nearest bacterium (orange tile). Clone into an empty tile when you have at least 2.5 energy. Good luck!", null, cyan, ""],
 	]
 	_build()
 	_show_step(0)

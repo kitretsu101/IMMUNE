@@ -106,9 +106,12 @@ func _refresh() -> void:
 		_tags.add_child(UiKit.chip(effect, Neon.PURPLE if effect == "Shifted" else (Neon.CYAN if effect == "Activated" else Neon.MAGENTA)))
 	_bars["Health"][2].text = "%.1f / %.0f" % [organism.health, organism.max_health]
 	_bars["Health"][1].value = organism.health / organism.max_health
-	_bars["Energy"][0].visible = bacterium
+	_bars["Energy"][0].visible = true
 	_bars["Energy"][1].value = organism.energy / ActionExecutor.MAX_ENERGY
-	_bars["Energy"][2].text = "%.1f" % organism.energy
+	if bacterium:
+		_bars["Energy"][2].text = "%.1f  (split: 3.4)" % organism.energy if organism.energy < Balance.REPRO_COST else "%.1f" % organism.energy
+	else:
+		_bars["Energy"][2].text = "%.1f  (clone: 2.5)" % organism.energy if organism.energy < Balance.CLONE_COST else "%.1f" % organism.energy
 	var col := organism.tile % 10
 	var row := organism.tile / 10
 	_put("Position", "(%d, %d)" % [col, row])

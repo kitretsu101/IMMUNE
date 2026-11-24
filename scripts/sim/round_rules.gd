@@ -17,7 +17,6 @@ static func end_of_round(state: WorldState) -> Array:
 		organism.tick_effects()
 	var bacteria := state.count_team(Sim.BACTERIA)
 	state.stats.bact_peak = maxi(state.stats.bact_peak, bacteria)
-	_update_dominance(state)
 	if bacteria <= int(state.stats.bact_peak * 0.25) and state.stats.bact_peak >= 6 and not state.stats.collapse_flag:
 		state.stats.collapse_flag = true
 		events.append(Ev.make("pop_collapse", "Environment", "Bacterial population collapse.", state.round,
@@ -226,12 +225,6 @@ static func check_victory(state: WorldState) -> Dictionary:
 	elif state.setup.core_win and state.core_infected() >= state.core.size():
 		winner = Sim.BACTERIA
 		text = "Bacterial victory · all human cells infected"
-	elif int(state.stats.get("dominance_%d" % Sim.IMMUNE, 0)) >= DOMINANCE_ROUNDS:
-		winner = Sim.IMMUNE
-		text = "Immune victory · overwhelming numbers held"
-	elif int(state.stats.get("dominance_%d" % Sim.BACTERIA, 0)) >= DOMINANCE_ROUNDS:
-		winner = Sim.BACTERIA
-		text = "Bacterial victory · overwhelming numbers held"
 	elif state.round > state.setup.max_rounds:
 		var immune_units := state.count_team(Sim.IMMUNE)
 		var bacteria_units := state.count_team(Sim.BACTERIA)
